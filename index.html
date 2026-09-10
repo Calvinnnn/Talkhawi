@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الطلخاوي | جزارة ومشويات</title>
+<meta name="description" content="الطلخاوي: جزارة ومشويات على الفحم. لحم طازج كل يوم، مشويات على الجمر، أكلات بدوية وسندوتشات وحواوشي.">
+<meta name="theme-color" content="#1b1512">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b1512'/%3E%3Cpath d='M8 22c4-1 5-4 6-8l2-5 2 5c1 4 2 7 6 8-4 1-5 2-6 4l-2 3-2-3c-1-2-2-3-6-4z' fill='%23c23616'/%3E%3C/svg%3E">
+<!-- DEPLOY STEP: replace https://example.com/ with the live URL before zipping -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="الطلخاوي | جزارة ومشويات">
+<meta property="og:description" content="لحم طازج كل يوم ومشويات على الجمر.">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://example.com/assets/hero-poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#1b1512;
+  --panel:#2a1f19;
+  --panel2:#241a14;
+  --accent:#c23616;
+  --accent-hover:#e2481f;
+  --accent-muted:#6b3220;
+  --text-secondary:#cdb8a4;
+  --text-primary:#f4e9dc;
+  --line:rgba(205,184,164,.16);
+  --line-strong:rgba(205,184,164,.38);
+  --tshadow:0 1px 2px rgba(5,5,10,.95),0 3px 12px rgba(5,5,10,.78),0 10px 44px rgba(5,5,10,.8);
+  --ease-out:cubic-bezier(.22,.9,.28,1);
+  --ease-settle:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth}
+body{overflow-x:hidden;overflow-x:clip;margin:0;background:var(--canvas);color:var(--text-primary);
+  font-family:"IBM Plex Sans Arabic",system-ui,Tahoma,sans-serif;line-height:1.8;
+  background-image:radial-gradient(ellipse 90% 40% at 50% -5%,rgba(194,54,22,.12),transparent 60%),
+  radial-gradient(ellipse 70% 30% at 85% 40%,rgba(107,50,32,.18),transparent 65%);}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+main,header,footer{position:relative;z-index:1}
+h1,h2,h3{font-family:Lalezar,"IBM Plex Sans Arabic",system-ui,sans-serif;font-weight:400;line-height:1.35;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+.skip{position:absolute;top:-60px;right:16px;background:var(--accent);color:#fff;padding:10px 18px;border-radius:10px;z-index:50;transition:top .2s}
+.skip:focus{top:12px;color:#fff}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:20px}
+.site-head{position:sticky;top:0;z-index:20;background:rgba(27,21,18,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;gap:14px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{flex:none}
+.brand b{font-family:Lalezar,sans-serif;font-weight:400;font-size:1.5rem;letter-spacing:0}
+.brand small{display:block;font-family:"IBM Plex Sans Arabic",sans-serif;font-size:.72rem;color:var(--text-secondary);line-height:1.2}
+nav.main-nav{margin-inline-start:auto;display:flex;gap:4px}
+nav.main-nav a{text-decoration:none;color:var(--text-secondary);padding:10px 14px;border-radius:10px;font-size:.95rem}
+nav.main-nav a:hover{color:var(--text-primary);background:rgba(205,184,164,.08)}
+:focus-visible{outline:2px solid var(--accent-hover);outline-offset:3px;border-radius:6px}
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+  background:
+   radial-gradient(ellipse 75% 55% at 50% 108%,rgba(194,54,22,.42),transparent 62%),
+   radial-gradient(ellipse 45% 30% at 18% 85%,rgba(226,72,31,.16),transparent 60%),
+   radial-gradient(ellipse 45% 30% at 82% 85%,rgba(226,72,31,.12),transparent 60%),
+   linear-gradient(180deg,#241a14 0%,#1b1512 55%,#140f0d 100%);}
+.hero .wrap{padding-block:84px 64px;text-align:center}
+.kicker{display:inline-block;font-size:.8rem;color:var(--text-secondary);border:1px solid var(--line-strong);
+  padding:6px 16px;border-radius:999px;background:rgba(8,8,15,.55);backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(5,5,10,.85)}
+.hero h1{font-size:clamp(2.6rem,7vw,4.6rem);margin:20px 0 8px;text-shadow:var(--tshadow)}
+.hero h1 .fire{color:var(--accent-hover)}
+.hero .sub{max-width:620px;margin:0 auto;color:var(--text-secondary);font-size:1.1rem;text-shadow:0 1px 3px rgba(5,5,10,.85)}
+.cta-row{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;cursor:pointer;border-radius:12px;
+  padding:12px 26px;font-weight:700;font-size:1rem;border:1px solid transparent;transition:transform .25s var(--ease-out),background .25s,border-color .25s}
+.btn-solid{background:var(--accent);color:#fff}
+.btn-solid:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.btn-ghost{border-color:var(--line-strong);color:var(--text-primary);background:rgba(8,8,15,.4)}
+.btn-ghost:hover{border-color:var(--accent);transform:translateY(-1px)}
+.grate{margin:34px auto 0;max-width:640px;opacity:.9}
+.ember-field{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.ember{position:absolute;bottom:-10px;width:5px;height:5px;border-radius:50%;background:#e2481f;opacity:0;
+  animation:rise 7s linear infinite}
+@keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}12%{opacity:.8}100%{transform:translateY(-70vh) translateX(24px);opacity:0}}
+.hero-note{margin-top:18px;color:var(--text-secondary);font-size:.85rem}
+section.block{padding-block:64px}
+.eyebrow{color:var(--accent-hover);font-size:.85rem;font-weight:700;margin-bottom:6px}
+.block h2{font-size:clamp(1.7rem,4vw,2.5rem);margin-bottom:10px}
+.lede{color:var(--text-secondary);max-width:640px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative;overflow:hidden}
+.card h3{font-size:1.3rem;margin-bottom:6px}
+.card p{color:var(--text-secondary);font-size:.95rem}
+.card::after{content:"";position:absolute;inset-inline:0;bottom:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0;transition:opacity .4s}
+.card.in::after{opacity:.7}
+/* menu */
+.menu-sec{background:var(--panel2);border-block:1px solid var(--line)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 8px}
+.tab{font-family:inherit;font-size:.95rem;font-weight:700;color:var(--text-secondary);background:transparent;
+  border:1px solid var(--line-strong);border-radius:999px;padding:10px 20px;cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s,transform .2s var(--ease-out)}
+.tab:hover{color:var(--text-primary);border-color:var(--accent)}
+.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.count{color:var(--text-secondary);font-size:.85rem;margin:6px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;min-height:120px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;
+  transition:opacity .18s var(--ease-out),transform .18s var(--ease-out),border-color .2s}
+.item:hover{border-color:var(--accent-muted)}
+.item .cat{font-size:.72rem;color:var(--accent-hover);font-weight:700}
+.item h3{font-size:1.15rem;margin:2px 0 6px}
+.item .price{font-family:"IBM Plex Sans Arabic",monospace;font-variant-numeric:tabular-nums;color:var(--text-primary);font-size:.92rem}
+.item .price b{color:#fff}
+.item.leaving{opacity:0;transform:scale(.96) translateY(6px)}
+.item.entering{opacity:0;transform:scale(.96) translateY(8px)}
+.item.entered{opacity:1;transform:none}
+.empty{grid-column:1/-1;text-align:center;color:var(--text-secondary);border:1px dashed var(--line-strong);border-radius:14px;padding:34px}
+/* faq + visit */
+.faq{display:grid;gap:10px;margin-top:22px;max-width:760px}
+.qa{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.qa h3{font-size:1.15rem;margin-bottom:4px}
+.qa p{color:var(--text-secondary);font-size:.96rem}
+.visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.visit-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+.visit-card h3{font-size:1.3rem;margin-bottom:8px}
+.visit-card p,.visit-card li{color:var(--text-secondary)}
+.visit-card ul{margin:8px 0 0;padding-inline-start:18px}
+.tel{font-size:1.4rem;font-weight:700;color:#fff;text-decoration:none;direction:ltr;display:inline-block}
+footer{border-top:1px solid var(--line);padding-block:34px;color:var(--text-secondary);font-size:.9rem}
+footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+/* entrances */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease-settle),transform .6s var(--ease-settle)}
+.rv.in{opacity:1;transform:none}
+@media (pointer:coarse){.btn{min-height:44px}}
+@media (max-width:900px){.cards,.grid{grid-template-columns:repeat(2,1fr)}.visit-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.cards,.grid{grid-template-columns:1fr}nav.main-nav{display:none}.hero .wrap{padding-block:64px 48px}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+  .ember{display:none}
+  html{scroll-behavior:auto}
+}
+body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused!important}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">تخطي إلى المحتوى</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="الطلخاوي">
+      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#2a1f19" stroke="#6b3220"/><path d="M8 22c4-1 5-4 6-8l2-5 2 5c1 4 2 7 6 8-4 1-5 2-6 4l-2 3-2-3c-1-2-2-3-6-4z" fill="#c23616"/></svg>
+      <span><b>الطلخاوي</b><small>جزارة ومشويات على الفحم</small></span>
+    </a>
+    <nav class="main-nav" aria-label="أقسام الموقع">
+      <a href="#menu">الأصناف</a>
+      <a href="#why">ليه إحنا</a>
+      <a href="#faq">أسئلة شائعة</a>
+      <a href="#visit">العنوان والمواعيد</a>
+    </nav>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <section class="hero" id="top" aria-label="مقدمة">
+    <div class="ember-field" aria-hidden="true" id="embers"></div>
+    <div class="wrap">
+      <span class="kicker">جزارة بلدي ومشويات على الجمر</span>
+      <h1>من السكينة <span class="fire">للجمر</span> على طول</h1>
+      <p class="sub">لحم طازج يتقطع كل يوم قدامك، ويستوي على فحم حقيقي. دي الحكاية كلها: نار هادية ولحمة تتكلم عن نفسها.</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#menu">شوف الأصناف</a>
+        <a class="btn btn-ghost" href="#visit">العنوان والمواعيد</a>
+      </div>
+      <svg class="grate" viewBox="0 0 640 60" aria-hidden="true">
+        <g stroke="#6b3220" stroke-width="3" stroke-linecap="round">
+          <line x1="20" y1="18" x2="620" y2="18"/><line x1="10" y1="34" x2="630" y2="34"/><line x1="20" y1="50" x2="620" y2="50"/>
+        </g>
+        <g stroke="#e2481f" stroke-width="2" opacity=".55">
+          <path d="M120 8c6 6 2 10 8 16M300 6c6 6 2 10 8 16M480 8c6 6 2 10 8 16"/>
+        </g>
+      </svg>
+      <p class="hero-note">الصور الحالية رسم توضيحي. صور المحل الحقيقية تتركب مكانها في أي وقت.</p>
+    </div>
+  </section>
+
+  <section class="block" id="why">
+    <div class="wrap">
+      <p class="eyebrow rv">الفكرة في كلمة واحدة: الجمر</p>
+      <h2 class="rv">نار هادية تستوي عليها اللحمة على مهلها</h2>
+      <p class="lede rv">مش بنستعجل النار ومش بنستعجل اللحمة. تقطيع مظبوط الصبح، وتتبيلة بسيطة، وسوا على الفحم يطلع الطعم اللي تعرفه من أول قطمة.</p>
+      <div class="cards">
+        <article class="card rv"><h3>تقطيع اليوم</h3><p>اللحم يتجهز طازج كل يوم، والدهن يتظبط على القطعية عشان تستحمل الجمر من غير ما تنشف.</p></article>
+        <article class="card rv"><h3>سوا على الفحم</h3><p>فحم حقيقي ونار هادية. الكفتة والريش والطرب ياخدوا وقتهم ويطلعوا بعلامة الشواية.</p></article>
+        <article class="card rv"><h3>أكل يكفي العيلة</h3><p>من السندوتش السريع لصينية المندي والطواجن الكبيرة. كل حجم معمول عشان يتقسم.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block menu-sec" id="menu">
+    <div class="wrap">
+      <p class="eyebrow rv">المنيو</p>
+      <h2 class="rv">كل الأصناف قدامك</h2>
+      <p class="lede rv">اختار صنف من الزراير والشبكة هتتفلتر لوحدها. الأسعار بالجنيه.</p>
+      <div class="tabs rv" role="group" aria-label="فلترة الأصناف" id="tabs"></div>
+      <p class="count" id="count" aria-live="polite"></p>
+      <div class="grid" id="grid" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="block" id="faq">
+    <div class="wrap">
+      <p class="eyebrow rv">أسئلة شائعة</p>
+      <h2 class="rv">اللي الناس بتسأله قبل ما تيجي</h2>
+      <div class="faq">
+        <div class="qa rv"><h3>اللحمة طازجة ولا مجمدة؟</h3><p>شغلنا الأساسي لحم طازج يتقطع كل يوم. أي صنف مختلف هنقولك عليه بوضوح قبل ما تطلب.</p></div>
+        <div class="qa rv"><h3>فيه دليفري؟</h3><p>الأكل متاح للاستلام من المحل. كلم التليفون واسأل عن منطقتك قبل ما تتحرك.</p></div>
+        <div class="qa rv"><h3>الكميات الكبيرة والمناسبات؟</h3><p>متاحة: مندي وصواني وطواجن كبيرة. كلمنا قبلها بيوم عشان نجهز الكمية مظبوط.</p></div>
+        <div class="qa rv"><h3>الأسعار شاملة إيه؟</h3><p>الأسعار المكتوبة تحت كل صنف هي اللي بتدفعها. أي إضافة عيش أو أرز بتبقى مكتوبة بسعرها.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block menu-sec" id="visit">
+    <div class="wrap">
+      <p class="eyebrow rv">تشرفنا</p>
+      <h2 class="rv">العنوان والمواعيد</h2>
+      <div class="visit-grid">
+        <div class="visit-card rv">
+          <h3>المواعيد</h3>
+          <ul><li>يوميا من 11 صباحا حتى 1 بعد منتصف الليل</li><li>الجمعة من بعد الصلاة</li><li>الطواجن الكبيرة بالحجز قبلها بيوم</li></ul>
+        </div>
+        <div class="visit-card rv">
+          <h3>التليفون والعنوان</h3>
+          <p><a class="tel" href="tel:+201000000000">0100 000 0000</a></p>
+          <p>غيّر الرقم والعنوان برقم المحل الحقيقي قبل النشر.</p>
+          <div class="cta-row" style="justify-content:start;margin-top:16px">
+            <a class="btn btn-solid" href="#menu">شوف الأصناف</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <span>الطلخاوي: جزارة ومشويات. الأسعار بالجنيه وقابلة للتحديث.</span>
+    <span>صفحة تعريفية للمحل. لا يوجد طلب أونلاين.</span>
+  </div>
+</footer>
+<script>
+"use strict";
+var CATS = ["كل الأصناف","المشويات","مقبلات وطواجن","أكلات بدوية","السندوتشات","الطيور","الحواوشي"];
+var ITEMS = [
+/* المشويات */
+{n:"انتركوت",c:"المشويات",p:"ربع 240 · نص 450 · كيلو 900"},
+{n:"فلتو",c:"المشويات",p:"ربع 240 · نص 450 · كيلو 900"},
+{n:"كباب",c:"المشويات",p:"ربع 240 · نص 450 · كيلو 900"},
+{n:"ريش",c:"المشويات",p:"ربع 300 · نص 600 · كيلو 1200"},
+{n:"طرب",c:"المشويات",p:"ربع 250 · نص 450 · كيلو 900"},
+{n:"فخادى ضانى",c:"المشويات",p:"ربع 300 · نص 600 · كيلو 1200"},
+{n:"كفتة",c:"المشويات",p:"ربع 170 · نص 340 · كيلو 680"},
+{n:"كفتة شامي",c:"المشويات",p:"ربع 200 · نص 400 · كيلو 800"},
+{n:"سدق",c:"المشويات",p:"ربع 170 · نص 340 · كيلو 680"},
+{n:"مشكل لحمة + كفتة",c:"المشويات",p:"ربع 200 · نص 400 · كيلو 800"},
+{n:"ميكس 4 أصناف حسب الرغبة",c:"المشويات",p:"ربع 275 · نص 500 · كيلو 1000"},
+{n:"كبدة",c:"المشويات",p:"ربع 150 · نص 300 · كيلو 600"},
+{n:"كلاوى",c:"المشويات",p:"ربع 175 · نص 350 · كيلو 700"},
+{n:"مخاصى",c:"المشويات",p:"ربع 175 · نص 350 · كيلو 700"},
+/* مقبلات وطواجن */
+{n:"ممبار",c:"مقبلات وطواجن",p:"120"},
+{n:"مشكل محاشي",c:"مقبلات وطواجن",p:"120"},
+{n:"ورق عنب",c:"مقبلات وطواجن",p:"60"},
+{n:"سمبوسك",c:"مقبلات وطواجن",p:"120"},
+{n:"رقاق",c:"مقبلات وطواجن",p:"120"},
+{n:"بطاطس",c:"مقبلات وطواجن",p:"30 / 60"},
+{n:"أرز برام باللحمة",c:"مقبلات وطواجن",p:"90 / 140"},
+{n:"أرز أصفر سادة",c:"مقبلات وطواجن",p:"60"},
+{n:"أرز شعرية",c:"مقبلات وطواجن",p:"50"},
+{n:"مكرونة بشاميل",c:"مقبلات وطواجن",p:"130"},
+{n:"شوربة لسان عصفور",c:"مقبلات وطواجن",p:"40"},
+{n:"ملوخية",c:"مقبلات وطواجن",p:"60 / 90"},
+{n:"بسلة",c:"مقبلات وطواجن",p:"60 / 90"},
+{n:"بامية",c:"مقبلات وطواجن",p:"60 / 90"},
+{n:"خضار مشكل",c:"مقبلات وطواجن",p:"60 / 90"},
+{n:"مكرونة مفروم",c:"مقبلات وطواجن",p:"220"},
+{n:"طاجن كوارع ورق عنب",c:"مقبلات وطواجن",p:"400"},
+{n:"طاجن عصعوص خضار",c:"مقبلات وطواجن",p:"400"},
+{n:"طاجن لحمة بالبصل",c:"مقبلات وطواجن",p:"400"},
+{n:"برام أرز سادة كبيرة",c:"مقبلات وطواجن",p:"200"},
+{n:"برام أرز باللحمة كبير",c:"مقبلات وطواجن",p:"400"},
+{n:"شوربة كوارع",c:"مقبلات وطواجن",p:"150"},
+/* أكلات بدوية */
+{n:"جارية شمبرى",c:"أكلات بدوية",p:"ربع 280 · نص 375 · كيلو 750"},
+{n:"جارية ضانى",c:"أكلات بدوية",p:"ربع 330 · نص 450 · كيلو 850"},
+{n:"أرز شمبرى",c:"أكلات بدوية",p:"ربع 280 · نص 375 · كيلو 750"},
+{n:"أرز ضانى",c:"أكلات بدوية",p:"ربع 330 · نص 450 · كيلو 850"},
+{n:"تحميرة شمبرى",c:"أكلات بدوية",p:"ربع 280 · نص 375 · كيلو 750"},
+{n:"تحميرة ضانى",c:"أكلات بدوية",p:"ربع 330 · نص 450 · كيلو 850"},
+{n:"علاقة ضانى",c:"أكلات بدوية",p:"كيلو 750"},
+{n:"ورقة شمبرى",c:"أكلات بدوية",p:"ربع 280 · نص 375 · كيلو 750"},
+{n:"ورقة ضانى",c:"أكلات بدوية",p:"ربع 330 · نص 450 · كيلو 850"},
+{n:"فتة شمبرى",c:"أكلات بدوية",p:"ربع 300 · نص 400 · كيلو 800"},
+{n:"فتة ضانى",c:"أكلات بدوية",p:"ربع 330 · نص 450 · كيلو 850"},
+{n:"مندى شمبرى",c:"أكلات بدوية",p:"ربع 280 · نص 375 · كيلو 750"},
+{n:"مندى ضانى",c:"أكلات بدوية",p:"ربع 330 · نص 450 · كيلو 850"},
+{n:"أرز شعرية",c:"أكلات بدوية",p:"ربع 75 · نص 90 · كيلو 180"},
+{n:"أرز بسمتى",c:"أكلات بدوية",p:"ربع 75 · نص 90 · كيلو 180"},
+{n:"أرز أحمر",c:"أكلات بدوية",p:"ربع 80 · نص 100 · كيلو 200"},
+{n:"أرز أبيض",c:"أكلات بدوية",p:"ربع 75 · نص 90 · كيلو 180"},
+{n:"جارية سادة",c:"أكلات بدوية",p:"ربع 75 · نص 90 · كيلو 180"},
+/* السندوتشات */
+{n:"لحمة مشوية",c:"السندوتشات",p:"وسط 90 · كبير 130"},
+{n:"طرب",c:"السندوتشات",p:"وسط 90 · كبير 140"},
+{n:"كفتة",c:"السندوتشات",p:"وسط 70 · كبير 110"},
+{n:"كباب",c:"السندوتشات",p:"وسط 70 · كبير 110"},
+{n:"مخاصى مشوى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"مخاصى إسكندرانى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"سدق مشوى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"سدق إسكندرانى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"كبدة مشوية",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"كبدة إسكندرانى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"كلاوى مشوى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"كلاوى إسكندرانى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"ممبار",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"شيش طاووق",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"قلب مشوى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"قلب إسكندرانى",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"لسان",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"طحال",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"مخ زبدة",c:"السندوتشات",p:"وسط 110 · كبير 150"},
+{n:"نخاع",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"كرشة",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"لحمة باردة",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"ميزاليكيا",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"شاورما لحمة",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"شاورما فراخ",c:"السندوتشات",p:"وسط 80 · كبير 110"},
+{n:"كبدة ضانى مشوى",c:"السندوتشات",p:"وسط 90 · كبير 130"},
+{n:"كبدة ضانى إسكندرانى",c:"السندوتشات",p:"وسط 90 · كبير 130"},
+{n:"كبدة بتلو مشوى",c:"السندوتشات",p:"وسط 90 · كبير 130"},
+{n:"كبدة بتلو إسكندرانى",c:"السندوتشات",p:"وسط 90 · كبير 130"},
+/* الطيور */
+{n:"فرخة مشوية",c:"الطيور",p:"ربع صدر 130 · ربع ورك 100 · نص 180 · كاملة 350"},
+{n:"فرخة شيش",c:"الطيور",p:"نص 200 · كاملة 390"},
+{n:"فرخة مخلية",c:"الطيور",p:"نص 200 · كاملة 390"},
+{n:"فرخة × بطاطس",c:"الطيور",p:"نص 250 · كاملة 480"},
+{n:"ديك × أرز",c:"الطيور",p:"نص 250 · كاملة 480"},
+{n:"ديك × مكرونة",c:"الطيور",p:"نص 250 · كاملة 480"},
+{n:"جوز حمام محشى",c:"الطيور",p:"نص 170 · جوز 340"},
+{n:"جوز حمام مشوى",c:"الطيور",p:"نص 170 · جوز 340"},
+{n:"شيش طاووق",c:"الطيور",p:"نص 250 · كيلو 500"},
+/* الحواوشي */
+{n:"حواوشي لحمة",c:"الحواوشي",p:"صغير 120 · وسط 140 · كبير 170"},
+{n:"حواوشي سدق",c:"الحواوشي",p:"صغير 120 · وسط 140 · كبير 170"},
+{n:"حواوشي بسطرمة",c:"الحواوشي",p:"صغير 140 · وسط 160 · كبير 180"},
+{n:"حواوشي مشكل لحوم",c:"الحواوشي",p:"صغير 140 · وسط 160 · كبير 180"},
+{n:"حواوشي لحمة وش بيتزا",c:"الحواوشي",p:"صغير 170 · وسط 190 · كبير 210"},
+{n:"حواوشي سدق وش بيتزا",c:"الحواوشي",p:"صغير 170 · وسط 190 · كبير 210"},
+{n:"حواوشي بسطرمة وش بيتزا",c:"الحواوشي",p:"صغير 170 · وسط 190 · كبير 210"},
+{n:"حواوشي مشكل وش بيتزا",c:"الحواوشي",p:"صغير 170 · وسط 190 · كبير 210"},
+{n:"حواوشي سكينتين",c:"الحواوشي",p:"كبير 220"},
+{n:"حواوشي سكينتين وش بيتزا",c:"الحواوشي",p:"كبير 250"},
+{n:"حواوشي ضانى",c:"الحواوشي",p:"كبير 220"},
+{n:"كيلو لحمة فى حواوشى",c:"الحواوشي",p:"800"},
+{n:"كيلو سدق فى حواوشى",c:"الحواوشي",p:"800"}
+];
+var tabsEl = document.getElementById("tabs");
+var grid = document.getElementById("grid");
+var count = document.getElementById("count");
+var active = CATS[0];
+var reduced = matchMedia("(prefers-reduced-motion: reduce)");
+function buildTabs(){
+  CATS.forEach(function(cat){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "tab"; b.textContent = cat;
+    b.setAttribute("aria-pressed", cat === active ? "true" : "false");
+    b.addEventListener("click", function(){ setFilter(cat); });
+    tabsEl.appendChild(b);
+  });
+}
+function setFilter(cat){
+  active = cat;
+  var btns = tabsEl.querySelectorAll(".tab");
+  btns.forEach(function(b){ b.setAttribute("aria-pressed", b.textContent === cat ? "true" : "false"); });
+  render(true);
+}
+function filtered(){
+  if(active === "كل الأصناف") return ITEMS;
+  return ITEMS.filter(function(it){ return it.c === active; });
+}
+function render(animate){
+  var list = filtered();
+  grid.innerHTML = "";
+  count.textContent = list.length + " صنف في " + active;
+  if(!list.length){
+    var d = document.createElement("div"); d.className = "empty"; d.textContent = "قريبًا";
+    grid.appendChild(d); return;
+  }
+  if(reduced.matches || !animate){
+    list.forEach(function(it){ grid.appendChild(card(it)); });
+    return;
+  }
+  list.forEach(function(it, i){
+    var el = card(it);
+    el.classList.add("entering");
+    el.style.transitionDelay = Math.min(i * 35, 600) + "ms";
+    grid.appendChild(el);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      el.classList.remove("entering"); el.classList.add("entered");
+    });});
+    setTimeout(function(){ el.style.transitionDelay = "0s"; }, 800 + Math.min(i*35,600));
+  });
+}
+function card(it){
+  var a = document.createElement("article");
+  a.className = "item";
+  var c = document.createElement("div"); c.className = "cat"; c.textContent = it.c;
+  var h = document.createElement("h3"); h.textContent = it.n;
+  var p = document.createElement("div"); p.className = "price";
+  var b = document.createElement("b"); b.textContent = it.p;
+  p.appendChild(document.createTextNode("جنيه · "));
+  p.appendChild(b);
+  a.appendChild(c); a.appendChild(h); a.appendChild(p);
+  return a;
+}
+buildTabs(); render(false);
+/* entrances */
+var io = new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+},{threshold:.12});
+document.querySelectorAll(".rv,.card").forEach(function(el){ io.observe(el); });
+/* embers */
+(function(){
+  if(reduced.matches) return;
+  var f = document.getElementById("embers");
+  for(var i=0;i<14;i++){
+    var s = document.createElement("span"); s.className = "ember";
+    s.style.right = (4 + Math.random()*92) + "%";
+    s.style.animationDelay = (-Math.random()*7).toFixed(1) + "s";
+    s.style.animationDuration = (5.5 + Math.random()*4).toFixed(1) + "s";
+    var sz = 3 + Math.random()*4; s.style.width = sz+"px"; s.style.height = sz+"px";
+    f.appendChild(s);
+  }
+})();
+document.addEventListener("visibilitychange", function(){
+  document.body.classList.toggle("paused", document.hidden);
+});
+</script>
+</body>
+</html>
