@@ -125,6 +125,15 @@ section.block{padding-block:64px}
 .visit-card p,.visit-card li{color:var(--text-secondary)}
 .visit-card ul{margin:8px 0 0;padding-inline-start:18px}
 .tel{font-size:1.4rem;font-weight:700;color:#fff;text-decoration:none;direction:ltr;display:inline-block}
+/* floating contact buttons (fixed on the left) */
+.float-contact{position:fixed;left:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:60}
+.float-btn{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--panel);border:1px solid var(--line-strong);color:var(--text-primary);
+  box-shadow:0 6px 20px rgba(0,0,0,.45);transition:transform .2s var(--ease-out),background .2s,border-color .2s}
+.float-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.08)}
+.float-btn:active{transform:scale(.94)}
+.float-btn svg{width:26px;height:26px;flex:none}
+@media (max-width:560px){.float-contact{left:10px;gap:10px}.float-btn{width:48px;height:48px}.float-btn svg{width:22px;height:22px}}
 footer{border-top:1px solid var(--line);padding-block:34px;color:var(--text-secondary);font-size:.9rem}
 footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 /* entrances */
@@ -228,9 +237,8 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
           <ul><li>يوميا من 11 صباحا حتى 1 بعد منتصف الليل</li><li>الجمعة من بعد الصلاة</li><li>الطواجن الكبيرة بالحجز قبلها بيوم</li></ul>
         </div>
         <div class="visit-card rv">
-          <h3>التليفون والعنوان</h3>
-          <p><a class="tel" href="tel:+201000000000">0100 000 0000</a></p>
-          <p>غيّر الرقم والعنوان برقم المحل الحقيقي قبل النشر.</p>
+          <h3>الخط الساخن</h3>
+          <p><a class="tel" href="tel:17407">17407</a></p>
           <div class="cta-row" style="justify-content:start;margin-top:16px">
             <a class="btn btn-solid" href="#menu">شوف الأصناف</a>
           </div>
@@ -245,6 +253,17 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <span>صفحة تعريفية للمحل. لا يوجد طلب أونلاين.</span>
   </div>
 </footer>
+<nav class="float-contact" aria-label="تواصل سريع">
+  <a class="float-btn" href="https://www.bing.com/maps/search?v=2&amp;pc=FACEBK&amp;mid=8100&amp;mkt=en-US&amp;fbclid=IwY2xjawUPyrdwZG9mAWV4dG4DYWVtAjEwAGJyaWQRMUhTTHo5Q0xGQ09PNjd5dGxzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEe9AA6B0Qr3Q5gaGB5IHOVawom34fbF0nQx7MKZhwh27XeO2ntaZSeOgyWSsM_aem_gs3ZcEckAldg_JG98xtL4Q&amp;FORM=FBKPL1&amp;q=119+%D8%AC%D9%85%D8%A7%D9%84+%D8%B9%D8%A8%D8%AF+%D8%A7%D9%84%D9%86%D8%A7%D8%B5%D8%B1%D8%8C+%D8%B3%D9%8A%D8%AF%D9%89+%D8%A8%D8%B4%D8%B1+%2C+Alexandria%2C+Egypt%2C+21624+&amp;cp=31.256349%7E29.985590&amp;lvl=16&amp;style=r" target="_blank" rel="noopener noreferrer" aria-label="موقع المحل على الخريطة" title="موقع المحل على الخريطة">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  </a>
+  <a class="float-btn" href="https://www.facebook.com/messages/t/616334448482290/" target="_blank" rel="noopener noreferrer" aria-label="كلمنا على ماسنجر" title="كلمنا على ماسنجر">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm1.1 13.9-2.6-2.8-5 2.8 5.5-5.8 2.7 2.7 4.9-2.7-5.5 5.8z"/></svg>
+  </a>
+  <a class="float-btn" href="https://wa.me/2017407" target="_blank" rel="noopener noreferrer" aria-label="كلمنا على واتساب" title="كلمنا على واتساب">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.5L2 22l4.7-1.2A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-2.8.7.7-2.7-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.2-.7.3-.9.9-1.1 2.2-.2 3.9a11.6 11.6 0 0 0 4.5 4.2c1.7.8 2.4.9 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.1-.5-.2z"/></svg>
+  </a>
+</nav>
 <script>
 "use strict";
 var CATS = ["كل الأصناف","المشويات","مقبلات وطواجن","أكلات بدوية","السندوتشات","الطيور","الحواوشي"];
