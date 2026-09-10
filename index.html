@@ -10,9 +10,9 @@
 <!-- DEPLOY STEP: replace https://example.com/ with the live URL before zipping -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="الطلخاوي | جزارة ومشويات">
-<meta property="og:description" content="لحم طازج كل يوم ومشويات على الجمر.">
+<meta property="og:description" content="لحم طازج كل يوم ومشويات.">
 <meta property="og:url" content="https://example.com/">
-<meta property="og:image" content="https://example.com/assets/hero-poster.jpg">
+<meta property="og:image" content="https://example.com/assets/images/eltalkhawy-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -59,23 +59,46 @@ nav.main-nav a:hover{color:var(--text-primary);background:rgba(205,184,164,.08)}
 :focus-visible{outline:2px solid var(--accent-hover);outline-offset:3px;border-radius:6px}
 .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
   background:
-   radial-gradient(ellipse 75% 55% at 50% 108%,rgba(194,54,22,.42),transparent 62%),
-   radial-gradient(ellipse 45% 30% at 18% 85%,rgba(226,72,31,.16),transparent 60%),
-   radial-gradient(ellipse 45% 30% at 82% 85%,rgba(226,72,31,.12),transparent 60%),
-   linear-gradient(180deg,#241a14 0%,#1b1512 55%,#140f0d 100%);}
-.hero .wrap{padding-block:84px 64px;text-align:center}
+   radial-gradient(ellipse 90% 45% at 50% 112%,rgba(226,72,31,.34),transparent 60%),
+   radial-gradient(ellipse 55% 32% at 50% 88%,rgba(194,54,22,.30),transparent 65%),
+   radial-gradient(ellipse 60% 40% at 12% 20%,rgba(107,50,32,.22),transparent 60%),
+   radial-gradient(ellipse 60% 40% at 88% 20%,rgba(107,50,32,.22),transparent 60%),
+   linear-gradient(180deg,#100c0a 0%,#1b1512 45%,#241109 78%,#140f0d 100%);}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse 115% 100% at 50% 42%,transparent 55%,rgba(8,5,4,.55) 100%);}
+.hero .wrap{position:relative;z-index:2;padding-block:72px 60px;text-align:center}
+/* brand showcase: official shop photo emerging from the fire atmosphere */
+.brand-hero{position:relative;max-width:520px;margin:0 auto 10px;will-change:transform}
+.brand-aura{position:absolute;inset:-14%;z-index:0;pointer-events:none;filter:blur(46px);opacity:.6;
+  background:radial-gradient(ellipse 60% 55% at 50% 55%,rgba(226,72,31,.55),rgba(194,54,22,.28) 55%,transparent 75%);
+  animation:auraPulse 6s ease-in-out infinite}
+@keyframes auraPulse{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:.7;transform:scale(1.06)}}
+.brand-photo{position:relative;z-index:1;display:block;width:100%;height:auto;border-radius:22px;
+  border:1px solid var(--line-strong);
+  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 70px rgba(194,54,22,.28),0 0 0 1px rgba(0,0,0,.4);
+  animation:brandIn 1.1s var(--ease-settle) both}
+@keyframes brandIn{0%{opacity:0;transform:scale(.93) translateY(30px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+/* drifting smoke wisps */
+.smoke{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.smoke span{position:absolute;width:60vmax;height:22vmax;border-radius:50%;filter:blur(60px);opacity:.10;
+  background:radial-gradient(ellipse,rgba(205,184,164,.5),transparent 70%)}
+.smoke span:first-child{top:6%;right:-12%;animation:smokeDrift 17s ease-in-out infinite alternate}
+.smoke span:last-child{bottom:2%;left:-14%;animation:smokeDrift 22s ease-in-out infinite alternate-reverse}
+@keyframes smokeDrift{0%{transform:translateX(0) translateY(0)}100%{transform:translateX(-9vw) translateY(-3vh)}}
 .kicker{display:inline-block;font-size:.8rem;color:var(--text-secondary);border:1px solid var(--line-strong);
   padding:6px 16px;border-radius:999px;background:rgba(8,8,15,.55);backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(5,5,10,.85)}
 .hero h1{font-size:clamp(2.6rem,7vw,4.6rem);margin:20px 0 8px;text-shadow:var(--tshadow)}
-.hero h1 .fire{color:var(--accent-hover)}
+.hero h1 .fire{color:var(--accent-hover);text-shadow:0 0 26px rgba(226,72,31,.5),var(--tshadow)}
 .hero .sub{max-width:620px;margin:0 auto;color:var(--text-secondary);font-size:1.1rem;text-shadow:0 1px 3px rgba(5,5,10,.85)}
 .cta-row{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;cursor:pointer;border-radius:12px;
-  padding:12px 26px;font-weight:700;font-size:1rem;border:1px solid transparent;transition:transform .25s var(--ease-out),background .25s,border-color .25s}
-.btn-solid{background:var(--accent);color:#fff}
-.btn-solid:hover{background:var(--accent-hover);transform:translateY(-1px)}
+  padding:12px 26px;font-weight:700;font-size:1rem;border:1px solid transparent;transition:transform .25s var(--ease-out),background .25s,border-color .25s,box-shadow .25s}
+.btn-solid{background:var(--accent);color:#fff;box-shadow:0 4px 18px rgba(194,54,22,.35)}
+.btn-solid:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 10px 32px rgba(226,72,31,.55)}
+.btn-solid:active{transform:translateY(0);box-shadow:0 4px 14px rgba(194,54,22,.4)}
 .btn-ghost{border-color:var(--line-strong);color:var(--text-primary);background:rgba(8,8,15,.4)}
-.btn-ghost:hover{border-color:var(--accent);transform:translateY(-1px)}
+.btn-ghost:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 18px rgba(194,54,22,.25)}
+.btn-ghost:active{transform:translateY(0)}
 .grate{margin:34px auto 0;max-width:640px;opacity:.9}
 .ember-field{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ember{position:absolute;bottom:-10px;width:5px;height:5px;border-radius:50%;background:#e2481f;opacity:0;
@@ -141,11 +164,12 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-con
 .rv.in{opacity:1;transform:none}
 @media (pointer:coarse){.btn{min-height:44px}}
 @media (max-width:900px){.cards,.grid{grid-template-columns:repeat(2,1fr)}.visit-grid{grid-template-columns:1fr}}
-@media (max-width:560px){.cards,.grid{grid-template-columns:1fr}nav.main-nav{display:none}.hero .wrap{padding-block:64px 48px}}
+@media (max-width:560px){.cards,.grid{grid-template-columns:1fr}nav.main-nav{display:none}.hero .wrap{padding-block:48px 40px}.brand-hero{max-width:min(340px,82vw)}.brand-aura{filter:blur(30px)}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .rv{opacity:1;transform:none}
-  .ember{display:none}
+  .ember,.smoke{display:none}
+  .brand-aura{opacity:.45}
   html{scroll-behavior:auto}
 }
 body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused!important}
@@ -157,7 +181,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   <div class="wrap">
     <a class="brand" href="#top" aria-label="الطلخاوي">
       <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#2a1f19" stroke="#6b3220"/><path d="M8 22c4-1 5-4 6-8l2-5 2 5c1 4 2 7 6 8-4 1-5 2-6 4l-2 3-2-3c-1-2-2-3-6-4z" fill="#c23616"/></svg>
-      <span><b>الطلخاوي</b><small>جزارة ومشويات على الفحم</small></span>
+      <span><b>الطلخاوي</b><small>جزارة ومشويات </small></span>
     </a>
     <nav class="main-nav" aria-label="أقسام الموقع">
       <a href="#menu">الأصناف</a>
@@ -170,9 +194,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 <main id="main" tabindex="-1">
   <section class="hero" id="top" aria-label="مقدمة">
     <div class="ember-field" aria-hidden="true" id="embers"></div>
+    <div class="smoke" aria-hidden="true"><span></span><span></span></div>
     <div class="wrap">
-      <span class="kicker">جزارة بلدي ومشويات على الجمر</span>
-      <h1>من السكينة <span class="fire">للجمر</span> على طول</h1>
+      <figure class="brand-hero">
+        <span class="brand-aura" aria-hidden="true"></span>
+        <img class="brand-photo" src="assets/images/eltalkhawy-logo.png" width="1080" height="1080" fetchpriority="high" decoding="async" alt="واجهة محل جزارة الطلخاوي: شعار ELTALKHAWY BUTCHERY وملوك البلدي">
+      </figure>
+      <span class="kicker">جزارة بلدي ومشويات </span>
+      <h1>فريشااات <span class="fire">ملوك البلدي</span>  ذبح يوم بيوم </h1>
       <p class="sub">لحم طازج يتقطع كل يوم قدامك، ويستوي على فحم حقيقي. دي الحكاية كلها: نار هادية ولحمة تتكلم عن نفسها.</p>
       <div class="cta-row">
         <a class="btn btn-solid" href="#menu">شوف الأصناف</a>
@@ -186,13 +215,12 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
           <path d="M120 8c6 6 2 10 8 16M300 6c6 6 2 10 8 16M480 8c6 6 2 10 8 16"/>
         </g>
       </svg>
-      <p class="hero-note">الصور الحالية رسم توضيحي. صور المحل الحقيقية تتركب مكانها في أي وقت.</p>
     </div>
   </section>
 
   <section class="block" id="why">
     <div class="wrap">
-      <p class="eyebrow rv">الفكرة في كلمة واحدة: الجمر</p>
+      <p class="eyebrow rv">الفكرة في كلمة واحدة: البلدي</p>
       <h2 class="rv">نار هادية تستوي عليها اللحمة على مهلها</h2>
       <p class="lede rv">مش بنستعجل النار ومش بنستعجل اللحمة. تقطيع مظبوط الصبح، وتتبيلة بسيطة، وسوا على الفحم يطلع الطعم اللي تعرفه من أول قطمة.</p>
       <div class="cards">
@@ -220,7 +248,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <h2 class="rv">اللي الناس بتسأله قبل ما تيجي</h2>
       <div class="faq">
         <div class="qa rv"><h3>اللحمة طازجة ولا مجمدة؟</h3><p>شغلنا الأساسي لحم طازج يتقطع كل يوم. أي صنف مختلف هنقولك عليه بوضوح قبل ما تطلب.</p></div>
-        <div class="qa rv"><h3>فيه دليفري؟</h3><p>الأكل متاح للاستلام من المحل. كلم التليفون واسأل عن منطقتك قبل ما تتحرك.</p></div>
+        <div class="qa rv"><h3>فيه دليفري؟</h3><p>متاح لحد باب البيت</p></div>
         <div class="qa rv"><h3>الكميات الكبيرة والمناسبات؟</h3><p>متاحة: مندي وصواني وطواجن كبيرة. كلمنا قبلها بيوم عشان نجهز الكمية مظبوط.</p></div>
         <div class="qa rv"><h3>الأسعار شاملة إيه؟</h3><p>الأسعار المكتوبة تحت كل صنف هي اللي بتدفعها. أي إضافة عيش أو أرز بتبقى مكتوبة بسعرها.</p></div>
       </div>
@@ -449,7 +477,8 @@ document.querySelectorAll(".rv,.card").forEach(function(el){ io.observe(el); });
 (function(){
   if(reduced.matches) return;
   var f = document.getElementById("embers");
-  for(var i=0;i<14;i++){
+  var N = Math.min(14, innerWidth < 560 ? 8 : 14);
+  for(var i=0;i<N;i++){
     var s = document.createElement("span"); s.className = "ember";
     s.style.right = (4 + Math.random()*92) + "%";
     s.style.animationDelay = (-Math.random()*7).toFixed(1) + "s";
@@ -461,6 +490,21 @@ document.querySelectorAll(".rv,.card").forEach(function(el){ io.observe(el); });
 document.addEventListener("visibilitychange", function(){
   document.body.classList.toggle("paused", document.hidden);
 });
+/* subtle hero parallax: the brand showcase drifts slower than the scroll */
+(function(){
+  if(reduced.matches) return;
+  var fig = document.querySelector(".brand-hero");
+  if(!fig) return;
+  var ticking = false;
+  function upd(){
+    ticking = false;
+    var y = scrollY;
+    if(y < innerHeight * 1.2) fig.style.transform = "translateY(" + Math.round(y * 0.06) + "px)";
+  }
+  addEventListener("scroll", function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(upd); }
+  }, {passive:true});
+})();
 </script>
 </body>
 </html>
