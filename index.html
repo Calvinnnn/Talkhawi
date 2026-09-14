@@ -668,88 +668,21 @@ function card(it){
 }
 buildTabs(); render(false);
 /* ═══════════════════════════════════════════════════════════════════════
-   OFFERS MARQUEE — continuous infinite random marquee sourced from ITEMS.
-   No separate offer pool needed: every card is a real ITEMS entry.
+   OFFERS MARQUEE — continuous infinite marquee with a FIXED lineup.
+   Always the same 4 items in the same order; content never reshuffles.
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* Image map: item name → offer image. Falls back to category, then default. */
-var OFFER_IMG_MAP = {
-  "كفتة":            "assets/images/offers/kofta.jpg",
-  "كفتة شامي":       "assets/images/offers/kofta.jpg",
-  "كباب":            "assets/images/offers/kebab.jpg",
-  "ريش":             "assets/images/offers/ribs.jpg",
-  "فخادى ضانى":      "assets/images/offers/ribs.jpg",
-  "طرب":             "assets/images/offers/ribs.jpg",
-  "انتركوت":         "assets/images/offers/ribs.jpg",
-  "فلتو":            "assets/images/offers/ribs.jpg",
-  "فرخة مشوية":      "assets/images/offers/chicken.jpg",
-  "فرخة شيش":        "assets/images/offers/chicken.jpg",
-  "فرخة مخلية":      "assets/images/offers/chicken.jpg",
-  "فرخة × بطاطس":    "assets/images/offers/chicken.jpg",
-  "ديك × أرز":       "assets/images/offers/chicken.jpg",
-  "ديك × مكرونة":    "assets/images/offers/chicken.jpg",
-  "شيش طاووق":       "assets/images/offers/chicken.jpg",
-  "حواوشي لحمة":     "assets/images/offers/hawawshi.jpg",
-  "حواوشي سدق":      "assets/images/offers/hawawshi.jpg",
-  "حواوشي بسطرمة":   "assets/images/offers/hawawshi.jpg",
-  "حواوشي مشكل لحوم":"assets/images/offers/hawawshi.jpg",
-  "حواوشي لحمة وش بيتزا":  "assets/images/offers/hawawshi.jpg",
-  "حواوشي سكينتين":  "assets/images/offers/hawawshi.jpg",
-  "حواوشي ضانى":     "assets/images/offers/hawawshi.jpg",
-  "ورق عنب":         "assets/images/offers/dolma.jpg",
-  "مشكل محاشي":      "assets/images/offers/dolma.jpg",
-  "ممبار":           "assets/images/offers/dolma.jpg",
-  "شاورما لحمة":     "assets/images/offers/shawarma.jpg",
-  "شاورما فراخ":     "assets/images/offers/shawarma.jpg"
-};
-var OFFER_CAT_IMG = {
-  "المشويات":        "assets/images/offers/kofta.jpg",
-  "الطيور":          "assets/images/offers/chicken.jpg",
-  "الحواوشي":        "assets/images/offers/hawawshi.jpg",
-  "مقبلات وطواجن":   "assets/images/offers/dolma.jpg",
-  "السندوتشات":      "assets/images/offers/shawarma.jpg",
-  "أكلات بدوية":     "assets/images/offers/ribs.jpg"
-};
+/* Fixed offer lineup. Each card carries its own explicit `img` so items
+   with no ITEMS entry (موزة, صينية الفخدة) still resolve correctly. */
+var OFFER_ITEMS = [
+  {n:"موزة", c:"العروض", p:"ربع 200 · نص 400 · كيلو 800", img:"assets/images/offers/mozza.jpg"},
+  {n:"فرخة مشوية", c:"الطيور", p:"ربع صدر 130 · ربع ورك 100 · نص 180 · كاملة 350", img:"assets/images/offers/chicken.jpg"},
+  {n:"كفتة", c:"المشويات", p:"ربع 170 · نص 340 · كيلو 680", img:"assets/images/offers/kofta.jpg"},
+  {n:"صينية الفخدة الضاني مع ميكس المشاوي", c:"العروض", p:"1200", img:"assets/images/offers/fakhda-mix.jpg"}
+];
 var OFFER_BADGES = ["عرض اليوم","اختيار الطلخاوي","عرض مميز","نجمة اليوم"];
 
-function getOfferImg(item){
-  return OFFER_IMG_MAP[item.n] || OFFER_CAT_IMG[item.c] || "assets/images/offers/kofta.jpg";
-}
-
-/* Fisher-Yates shuffle; returns new array */
-function shuffleArr(arr){
-  var a = arr.slice();
-  for(var i = a.length - 1; i > 0; i--){
-    var j = Math.floor(Math.random() * (i + 1));
-    var t = a[i]; a[i] = a[j]; a[j] = t;
-  }
-  return a;
-}
-
-/* Pick `count` unique items from ITEMS, preferring items NOT in `excludeItems` */
-function pickOfferItems(count, excludeItems){
-  var excludeKeys = {};
-  if(excludeItems){
-    excludeItems.forEach(function(it){ excludeKeys[it.n + "\x00" + it.c] = true; });
-  }
-  var shuffled = shuffleArr(ITEMS);
-  var result = [];
-  /* First pass: prefer items absent from previous cycle */
-  shuffled.forEach(function(it){
-    if(result.length >= count) return;
-    if(!excludeKeys[it.n + "\x00" + it.c]) result.push(it);
-  });
-  /* Fill remaining if ITEMS is small (shouldn't happen here) */
-  if(result.length < count){
-    shuffled.forEach(function(it){
-      if(result.length >= count) return;
-      if(!result.some(function(r){ return r.n === it.n && r.c === it.c; })) result.push(it);
-    });
-  }
-  return result.slice(0, count);
-}
-
-/* Build a single offer card DOM element from an ITEMS entry */
+/* Build a single offer card DOM element from an OFFER_ITEMS entry */
 function makeOfferCard(item){
   var badgeText = OFFER_BADGES[Math.floor(Math.random() * OFFER_BADGES.length)];
   var a = document.createElement("article");
@@ -758,7 +691,7 @@ function makeOfferCard(item){
   var media = document.createElement("div");
   media.className = "offer-media";
   var im = document.createElement("img");
-  im.src = getOfferImg(item);
+  im.src = item.img;
   im.alt = item.n + " · " + item.c;
   im.loading = "lazy";
   im.decoding = "async";
@@ -785,44 +718,28 @@ function makeOfferCard(item){
   return a;
 }
 
-/* Update an existing card's content in-place (avoids full DOM rebuild) */
-function updateOfferCard(el, item){
-  var im = el.querySelector("img");
-  im.src = getOfferImg(item);
-  im.alt = item.n + " · " + item.c;
-  el.querySelector("h3").textContent = item.n;
-  el.querySelector(".offer-cat").textContent = item.c;
-  el.querySelector(".offer-price b").textContent = item.p;
-  var badgeText = OFFER_BADGES[Math.floor(Math.random() * OFFER_BADGES.length)];
-  el.querySelector(".offer-badge").textContent = badgeText;
-}
-
 /*
   initOffersMarquee()
   ───────────────────
   Continuous infinite marquee using requestAnimationFrame.
 
-  Architecture — double-set seamless swap:
-    The track contains 2×COUNT cards: [Set A (cards 0–9)] [Set B (cards 10–19)]
+  Architecture — static double-set seamless loop:
+    The track contains the fixed OFFER_ITEMS twice back-to-back:
+    [Set A (the 4 items)] [Set B (the same 4 items, same order)]
 
     offset starts at 0 and decrements by SPEED px/s each frame.
     When |offset| reaches setWidth (width of one set), Set A has fully
     scrolled out of view and Set B is now visible from position 0.
 
-    At that instant we:
-      1. Add setWidth back to offset  → instant reset, zero visual change
-         (because Set B's content now occupies exactly where Set A started)
-      2. Copy Set B items into Set A DOM cards
-      3. Generate a fresh random 10 for Set B
-
-    This creates an infinite stream of randomly-changing cycles with
-    no blank frames, no jumps, and no CSS reflow.
+    At that instant we add setWidth back to offset → instant reset with
+    zero visual change (Set B mirrors Set A exactly). Content is never
+    regenerated or reshuffled; the same 4 items loop forever.
 
     Manual arrows: the .carousel-arrow buttons step the track by exactly
     one card (card width + gap). Right steps backward (content shifts
-    right, clamped at 0); left steps forward (content shifts left, reusing
-    the same Set A→B promotion at the boundary). Auto-scroll pauses for
-    the step animation and resumes after a short cooldown.
+    right, clamped at 0); left steps forward (content shifts left, with
+    the same invisible positional reset at the boundary). Auto-scroll
+    pauses for the step animation and resumes after a short cooldown.
 */
 function initOffersMarquee(){
   var track = document.getElementById("offerTrack");
@@ -830,12 +747,10 @@ function initOffersMarquee(){
   var sec   = document.getElementById("offers");
   if(!track || !vp || !sec) return;
 
-  var COUNT = 10;
+  var SET_LEN = OFFER_ITEMS.length; /* 4 fixed items, looped twice */
   var SPEED = 55;        /* px / second */
   var GAP   = 16;        /* matches .offer-card margin-right (px) */
 
-  var itemsA, itemsB;
-  var cardsA = [], cardsB = [];
   var offset   = 0;
   var setWidth = 0;      /* recalculated after first layout */
   var rafId    = null;
@@ -848,37 +763,22 @@ function initOffersMarquee(){
   var resumeTimer = null;
   var RESUME_DELAY = 1200; /* ms of calm before auto-scroll resumes after a click */
 
-  /* ── Build DOM ── */
+  /* ── Build DOM: the same 4 fixed items twice back-to-back ── */
   function buildDOM(){
-    itemsA = pickOfferItems(COUNT, null);
-    itemsB = pickOfferItems(COUNT, itemsA);
     track.innerHTML = "";
-    cardsA = itemsA.map(function(it){
-      var c = makeOfferCard(it); track.appendChild(c); return c;
-    });
-    cardsB = itemsB.map(function(it){
-      var c = makeOfferCard(it); track.appendChild(c); return c;
-    });
+    for(var r = 0; r < 2; r++){
+      OFFER_ITEMS.forEach(function(it){ track.appendChild(makeOfferCard(it)); });
+    }
     /* Measure after layout paint */
     requestAnimationFrame(function(){
       var first = track.children[0];
       if(first){
         GAP = parseFloat(getComputedStyle(first).marginRight) || 16;
-        setWidth = COUNT * (first.offsetWidth + GAP);
+        setWidth = SET_LEN * (first.offsetWidth + GAP);
       }
       offset = 0;
       track.style.transform = "translateX(0px)";
     });
-  }
-
-  /* Shared cycle-boundary logic: invisible positional reset, promote
-     Set B → Set A in place, then generate a fresh random Set B */
-  function promoteSets(){
-    offset += setWidth;
-    itemsA = itemsB.slice();
-    cardsA.forEach(function(el, i){ updateOfferCard(el, itemsA[i]); });
-    itemsB = pickOfferItems(COUNT, itemsA);
-    cardsB.forEach(function(el, i){ updateOfferCard(el, itemsB[i]); });
   }
 
   /* ── RAF tick ── */
@@ -891,9 +791,10 @@ function initOffersMarquee(){
 
     offset -= SPEED * dt;
 
-    /* Cycle boundary: Set A has fully exited */
+    /* Cycle boundary: Set A has fully exited → invisible positional
+       reset (Set B mirrors Set A, so nothing visually changes) */
     if(setWidth > 0 && offset <= -setWidth){
-      promoteSets();
+      offset += setWidth;
     }
 
     track.style.transform = "translateX(" + offset.toFixed(2) + "px)";
@@ -946,10 +847,10 @@ function initOffersMarquee(){
       /* backward: shift content right, never past the start edge */
       offset = Math.min(0, offset + s);
     } else {
-      /* forward: shift content left, promoting sets at the boundary */
+      /* forward: shift content left, resetting position at the boundary */
       offset -= s;
       while(setWidth > 0 && offset <= -setWidth){
-        promoteSets();
+        offset += setWidth;
       }
     }
     /* the .offer-track CSS transition animates this move */
@@ -978,7 +879,7 @@ function initOffersMarquee(){
       var first = track.children[0];
       if(!first) return;
       GAP = parseFloat(getComputedStyle(first).marginRight) || 16;
-      setWidth = COUNT * (first.offsetWidth + GAP);
+      setWidth = SET_LEN * (first.offsetWidth + GAP);
       /* Keep offset within valid range after resize */
       if(setWidth > 0 && offset < -setWidth) offset = offset % -setWidth;
     }, 200);
