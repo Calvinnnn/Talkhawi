@@ -871,6 +871,16 @@ function initOffersMarquee(){
     });
   }
 
+  /* Shared cycle-boundary logic: invisible positional reset, promote
+     Set B → Set A in place, then generate a fresh random Set B */
+  function promoteSets(){
+    offset += setWidth;
+    itemsA = itemsB.slice();
+    cardsA.forEach(function(el, i){ updateOfferCard(el, itemsA[i]); });
+    itemsB = pickOfferItems(COUNT, itemsA);
+    cardsB.forEach(function(el, i){ updateOfferCard(el, itemsB[i]); });
+  }
+
   /* ── RAF tick ── */
   function tick(ts){
     if(!marqueeRunning){ rafId = null; return; }
@@ -883,13 +893,7 @@ function initOffersMarquee(){
 
     /* Cycle boundary: Set A has fully exited */
     if(setWidth > 0 && offset <= -setWidth){
-      offset += setWidth;           /* invisible positional reset */
-      /* Promote Set B → Set A (update DOM in-place) */
-      itemsA = itemsB.slice();
-      cardsA.forEach(function(el, i){ updateOfferCard(el, itemsA[i]); });
-      /* Generate fresh Set B */
-      itemsB = pickOfferItems(COUNT, itemsA);
-      cardsB.forEach(function(el, i){ updateOfferCard(el, itemsB[i]); });
+      promoteSets();
     }
 
     track.style.transform = "translateX(" + offset.toFixed(2) + "px)";
@@ -945,11 +949,7 @@ function initOffersMarquee(){
       /* forward: shift content left, promoting sets at the boundary */
       offset -= s;
       while(setWidth > 0 && offset <= -setWidth){
-        offset += setWidth;
-        itemsA = itemsB.slice();
-        cardsA.forEach(function(el, i){ updateOfferCard(el, itemsA[i]); });
-        itemsB = pickOfferItems(COUNT, itemsA);
-        cardsB.forEach(function(el, i){ updateOfferCard(el, itemsB[i]); });
+        promoteSets();
       }
     }
     /* the .offer-track CSS transition animates this move */
