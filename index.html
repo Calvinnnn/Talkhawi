@@ -137,6 +137,23 @@ section.block{padding-block:64px}
 .item.entering{opacity:0;transform:scale(.96) translateY(8px)}
 .item.entered{opacity:1;transform:none}
 .empty{grid-column:1/-1;text-align:center;color:var(--text-secondary);border:1px dashed var(--line-strong);border-radius:14px;padding:34px}
+.empty strong{display:block;font-size:1.2rem;color:var(--text-primary);margin-bottom:4px}
+.empty span{font-size:.92rem}
+/* search */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.search-wrap{margin:22px 0 4px;max-width:520px}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line-strong);
+  border-radius:999px;padding:12px 20px;transition:border-color .25s,box-shadow .25s,transform .25s var(--ease-out)}
+.search-box:hover{border-color:var(--accent-muted);transform:translateY(-1px)}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(194,54,22,.22),0 8px 28px rgba(0,0,0,.4);transform:none}
+.search-box svg{width:20px;height:20px;flex:none;color:var(--text-secondary);transition:color .25s}
+.search-box:focus-within svg{color:var(--accent-hover)}
+#searchInput{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text-primary);font:inherit;font-size:1rem;padding:0}
+#searchInput::placeholder{color:var(--text-secondary);opacity:.8}
+#searchInput::-webkit-search-cancel-button{display:none}
+#searchClear{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--line-strong);background:transparent;
+  color:var(--text-secondary);font-size:1.1rem;line-height:1;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+#searchClear:hover{color:#fff;border-color:var(--accent);background:var(--accent)}
 /* faq + visit */
 .faq{display:grid;gap:10px;margin-top:22px;max-width:760px}
 .qa{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
@@ -236,6 +253,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <p class="eyebrow rv">المنيو</p>
       <h2 class="rv">كل الأصناف قدامك</h2>
       <p class="lede rv">اختار صنف من الزراير والشبكة هتتفلتر لوحدها. الأسعار بالجنيه.</p>
+      <div class="search-wrap rv">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+          <span class="sr-only">ابحث في الأصناف</span>
+          <input type="search" id="searchInput" placeholder="بتدور على إيه؟" autocomplete="off" aria-label="ابحث في الأصناف">
+          <button type="button" id="searchClear" aria-label="مسح البحث" hidden>×</button>
+        </label>
+      </div>
       <div class="tabs rv" role="group" aria-label="فلترة الأصناف" id="tabs"></div>
       <p class="count" id="count" aria-live="polite"></p>
       <div class="grid" id="grid" aria-live="polite"></div>
@@ -412,6 +437,7 @@ var tabsEl = document.getElementById("tabs");
 var grid = document.getElementById("grid");
 var count = document.getElementById("count");
 var active = CATS[0];
+var searchQuery = "";
 var reduced = matchMedia("(prefers-reduced-motion: reduce)");
 function buildTabs(){
   CATS.forEach(function(cat){
@@ -428,16 +454,39 @@ function setFilter(cat){
   btns.forEach(function(b){ b.setAttribute("aria-pressed", b.textContent === cat ? "true" : "false"); });
   render(true);
 }
+/* Arabic-tolerant matching: alef forms, teh-marbuta, alef-maqsura, diacritics */
+function normalizeArabic(s){
+  return (s || "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي")
+    .replace(/[ً-ٰٟ]/g, "").replace(/ـ/g, "").trim();
+}
 function filtered(){
-  if(active === "كل الأصناف") return ITEMS;
-  return ITEMS.filter(function(it){ return it.c === active; });
+  var list = (active === "كل الأصناف") ? ITEMS
+    : ITEMS.filter(function(it){ return it.c === active; });
+  var q = normalizeArabic(searchQuery);
+  if(!q) return list;
+  return list.filter(function(it){ return normalizeArabic(it.n).indexOf(q) !== -1; });
 }
 function render(animate){
   var list = filtered();
+  var q = searchQuery.trim();
   grid.innerHTML = "";
-  count.textContent = list.length + " صنف في " + active;
+  if(q && list.length){
+    count.textContent = list.length + " نتائج لـ \"" + q + "\"" +
+      (active !== "كل الأصناف" ? " في " + active : "");
+  } else if(!q){
+    count.textContent = list.length + " صنف في " + active;
+  } else {
+    count.textContent = "لا نتائج لـ \"" + q + "\"";
+  }
   if(!list.length){
-    var d = document.createElement("div"); d.className = "empty"; d.textContent = "قريبًا";
+    var d = document.createElement("div"); d.className = "empty";
+    if(q){
+      var s = document.createElement("strong"); s.textContent = "مش لاقيين الصنف ده 😅";
+      var t = document.createElement("span"); t.textContent = "جرب تكتب اسم صنف تاني";
+      d.appendChild(s); d.appendChild(t);
+    } else {
+      d.textContent = "قريبًا";
+    }
     grid.appendChild(d); return;
   }
   if(reduced.matches || !animate){
@@ -468,6 +517,30 @@ function card(it){
   return a;
 }
 buildTabs(); render(false);
+/* search: filters together with the active category, never replaces it */
+var searchInput = document.getElementById("searchInput");
+var searchClear = document.getElementById("searchClear");
+var searchTimer = null;
+searchInput.addEventListener("input", function(){
+  searchQuery = searchInput.value;
+  searchClear.hidden = !searchQuery;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function(){ render(true); }, 160);
+});
+searchClear.addEventListener("click", function(){
+  searchInput.value = "";
+  searchQuery = "";
+  searchClear.hidden = true;
+  searchInput.focus();
+  render(true);
+});
+document.addEventListener("keydown", function(e){
+  if(e.key !== "/") return;
+  var tag = (document.activeElement || {}).tagName;
+  if(tag === "INPUT" || tag === "TEXTAREA") return;
+  e.preventDefault();
+  searchInput.focus();
+});
 /* entrances */
 var io = new IntersectionObserver(function(es){
   es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
