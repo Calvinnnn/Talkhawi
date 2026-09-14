@@ -756,19 +756,22 @@ function renderSchoolBoxes(){
 }
 renderSchoolBoxes();
 /* carousels: deterministic index-based infinite looping.
-   Physical directions on purpose (RTL-safe): right arrow moves cards right,
-   left arrow moves cards left. Seamless wrap via internal clones only;
-   the underlying data (OFFER_POOL, SCHOOL_BOXES) is never duplicated. */
-function initCarousel(vpId, trackId, fixedVisible){
+   Physical directions (RTL-safe): right arrow → visual right (previous), left → visual left (next).
+   isAnimating lock prevents queued transitions from rapid clicks.
+   Returns { start, stop } for external autoplay control via IntersectionObserver. */
+function initCarousel(vpId, trackId, fixedVisible, autoplayMs){
   var vp = document.getElementById(vpId);
   var track = document.getElementById(trackId);
-  if(!vp || !track) return;
+  var noop = {start:function(){},stop:function(){}};
+  if(!vp || !track) return noop;
   var originals = Array.prototype.slice.call(track.children);
   var n = originals.length;
-  if(!n) return;
+  if(!n) return noop;
   var box = vp.parentNode;
   var btns = box ? box.querySelectorAll(".carousel-arrow") : [];
   var current = 0, step = 0, clones = 0;
+  var isAnimating = false;
+  var autoTimer = null;
   function gapOf(){
     var f = track.children[0] || originals[0];
     return f ? (parseFloat(getComputedStyle(f).marginRight) || 0) : 0;
@@ -790,41 +793,81 @@ function initCarousel(vpId, trackId, fixedVisible){
     if(!animate){ void track.offsetWidth; track.style.transition = ""; }
   }
   function build(){
+    isAnimating = false; /* reset lock on every rebuild so arrows work after resize */
     var s = measureStep();
     if(s > 0) step = s;
     clones = wantClones();
     track.innerHTML = "";
     var i, c;
-    for(i = n - clones; i < n; i++){ c = originals[i].cloneNode(true); c.setAttribute("aria-hidden", "true"); track.appendChild(c); }
+    for(i = n - clones; i < n; i++){ c = originals[i].cloneNode(true); c.setAttribute("aria-hidden","true"); track.appendChild(c); }
     originals.forEach(function(el){ el.removeAttribute("aria-hidden"); track.appendChild(el); });
-    for(i = 0; i < clones; i++){ c = originals[i].cloneNode(true); c.setAttribute("aria-hidden", "true"); track.appendChild(c); }
+    for(i = 0; i < clones; i++){ c = originals[i].cloneNode(true); c.setAttribute("aria-hidden","true"); track.appendChild(c); }
     current = clones;
     apply(false);
   }
   function go(dir){
+    if(isAnimating) return; /* lock: ignore clicks while transition is running */
     var s = measureStep();
     if(s > 0) step = s;
-    if(wantClones() !== clones){ build(); }
+    if(wantClones() !== clones){ build(); return; } /* rebuild on viewport resize; skip this click */
+    isAnimating = true;
     current += (dir === "right" ? -1 : 1);
     apply(true);
   }
   track.addEventListener("transitionend", function(e){
     if(!e || e.target !== track || e.propertyName !== "transform") return;
+    /* seamless wrap: silently snap back into the real card range */
     while(current < clones){ current += n; }
     while(current >= clones + n){ current -= n; }
     apply(false);
+    isAnimating = false; /* unlock: allow next click / autoplay tick */
   });
   Array.prototype.forEach.call(btns, function(b){
     b.addEventListener("click", function(){ go(b.getAttribute("data-dir")); });
   });
   var rt = null;
-  addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(build, 180); });
-  addEventListener("load", build);
+  window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(build, 180); });
+  window.addEventListener("load", build);
   build();
+  /* autoplay: only runs when the caller calls start(); pauses when the tab is hidden */
+  function startAutoplay(){
+    if(!autoplayMs || autoTimer) return;
+    autoTimer = setInterval(function(){ if(!document.hidden) go("left"); }, autoplayMs);
+  }
+  function stopAutoplay(){
+    if(autoTimer){ clearInterval(autoTimer); autoTimer = null; }
+  }
+  return {start:startAutoplay, stop:stopAutoplay};
 }
 if(!reduced.matches){
-  initCarousel("offerViewport", "offerTrack", 0);
+  /* school carousel: manual arrows only, no autoplay */
   initCarousel("schoolViewport", "schoolTrack", 1);
+  /* offers carousel: autoplay activates only when #offers is in the viewport */
+  var offersCarousel = initCarousel("offerViewport", "offerTrack", 0, 3500);
+  var offersSec = document.getElementById("offers");
+  if(offersSec && offersCarousel){
+    var offersVisIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ offersCarousel.start(); }
+        else{ offersCarousel.stop(); }
+      });
+    },{threshold:0.3});
+    offersVisIO.observe(offersSec);
+  }
+  /* school section entry: add .section-in once the section scrolls into view,
+     triggering the card entrance keyframe animation defined in CSS */
+  var schoolSec = document.getElementById("school-offers");
+  if(schoolSec){
+    var schoolEntryIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          schoolSec.classList.add("section-in");
+          schoolEntryIO.disconnect();
+        }
+      });
+    },{threshold:0.15});
+    schoolEntryIO.observe(schoolSec);
+  }
 }
 /* search: filters together with the active category, never replaces it */
 var searchInput = document.getElementById("searchInput");
