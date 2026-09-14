@@ -224,10 +224,14 @@ section.block{padding-block:64px}
 .school-box-items li{font-size:.9rem;color:var(--text-secondary);position:relative;padding-inline-start:18px}
 .school-box-items li::before{content:"✓";position:absolute;inset-inline-start:0;color:var(--accent-hover);font-weight:700}
 @media (max-width:560px){.school-box-card{flex-basis:100%}.school-box-items{grid-template-columns:1fr}}
-/* card entrance animation: fires once when #school-offers.section-in is set by IntersectionObserver */
+/* card entrance animation: fires once when .section-in is set by IntersectionObserver */
 @keyframes schoolCardIn{0%{opacity:0;transform:translateY(22px) scale(.97)}100%{opacity:1;transform:none}}
 #school-offers.section-in .school-box-track .school-box-card:not([aria-hidden]){
   animation:schoolCardIn .75s var(--ease-settle) both}
+
+@keyframes offerCardIn{0%{opacity:0;transform:translateY(22px) scale(.97)}100%{opacity:1;transform:none}}
+#offers.section-in .offer-track .offer-card:not([aria-hidden]){
+  animation:offerCardIn .75s var(--ease-settle) both}
 /* carousel arrows */
 .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;
   border-radius:50%;border:1px solid var(--line-strong);background:rgba(27,21,18,.85);backdrop-filter:blur(8px);
@@ -797,6 +801,8 @@ function initCarousel(vpId, trackId, fixedVisible, autoplayMs){
   var current = 0, step = 0, clones = 0;
   var isAnimating = false;
   var autoTimer = null;
+  var transitionFallbackTimer = null;
+
   function gapOf(){
     var f = track.children[0] || originals[0];
     return f ? (parseFloat(getComputedStyle(f).marginRight) || 0) : 0;
@@ -813,54 +819,83 @@ function initCarousel(vpId, trackId, fixedVisible, autoplayMs){
     return Math.min(n, Math.max(1, Math.ceil((vp.clientWidth + gapOf()) / s)));
   }
   function apply(animate){
+    if(animate){
+      clearTimeout(transitionFallbackTimer);
+      transitionFallbackTimer = setTimeout(onTransitionEnd, 600);
+    } else {
+      clearTimeout(transitionFallbackTimer);
+    }
     track.style.transition = animate ? "" : "none";
     track.style.transform = "translateX(" + (-current * step) + "px)";
     if(!animate){ void track.offsetWidth; track.style.transition = ""; }
   }
   function build(){
-    isAnimating = false; /* reset lock on every rebuild so arrows work after resize */
+    isAnimating = false;
     var s = measureStep();
     if(s > 0) step = s;
+    var oldRealIndex = (n > 0 && clones > 0) ? ((current - clones) % n + n) % n : 0;
     clones = wantClones();
     track.innerHTML = "";
     var i, c;
-    for(i = n - clones; i < n; i++){ c = originals[i].cloneNode(true); c.setAttribute("aria-hidden","true"); track.appendChild(c); }
-    originals.forEach(function(el){ el.removeAttribute("aria-hidden"); track.appendChild(el); });
-    for(i = 0; i < clones; i++){ c = originals[i].cloneNode(true); c.setAttribute("aria-hidden","true"); track.appendChild(c); }
-    current = clones;
+    for(i = n - clones; i < n; i++){
+      c = originals[i].cloneNode(true);
+      c.setAttribute("aria-hidden","true");
+      track.appendChild(c);
+    }
+    originals.forEach(function(el, idx){
+      el.removeAttribute("aria-hidden");
+      el.style.animationDelay = (idx * 80) + "ms";
+      track.appendChild(el);
+    });
+    for(i = 0; i < clones; i++){
+      c = originals[i].cloneNode(true);
+      c.setAttribute("aria-hidden","true");
+      track.appendChild(c);
+    }
+    current = clones + oldRealIndex;
     apply(false);
   }
-  function go(dir){
-    if(isAnimating) return; /* lock: ignore clicks while transition is running */
+  function go(dir, isUserAction){
+    if(isAnimating) return;
     var s = measureStep();
     if(s > 0) step = s;
-    if(wantClones() !== clones){ build(); return; } /* rebuild on viewport resize; skip this click */
+    if(wantClones() !== clones){ build(); }
     isAnimating = true;
     current += (dir === "right" ? -1 : 1);
     apply(true);
+    if(isUserAction){ resetAutoplay(); }
   }
-  track.addEventListener("transitionend", function(e){
-    if(!e || e.target !== track || e.propertyName !== "transform") return;
-    /* seamless wrap: silently snap back into the real card range */
+  function onTransitionEnd(){
+    clearTimeout(transitionFallbackTimer);
+    if(!isAnimating && current >= clones && current < clones + n) return;
     while(current < clones){ current += n; }
     while(current >= clones + n){ current -= n; }
     apply(false);
-    isAnimating = false; /* unlock: allow next click / autoplay tick */
+    isAnimating = false;
+  }
+  track.addEventListener("transitionend", function(e){
+    if(!e || e.target !== track || e.propertyName !== "transform") return;
+    onTransitionEnd();
   });
   Array.prototype.forEach.call(btns, function(b){
-    b.addEventListener("click", function(){ go(b.getAttribute("data-dir")); });
+    b.addEventListener("click", function(){ go(b.getAttribute("data-dir"), true); });
   });
   var rt = null;
   window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(build, 180); });
-  window.addEventListener("load", build);
   build();
-  /* autoplay: only runs when the caller calls start(); pauses when the tab is hidden */
+
   function startAutoplay(){
-    if(!autoplayMs || autoTimer) return;
-    autoTimer = setInterval(function(){ if(!document.hidden) go("left"); }, autoplayMs);
+    if(!autoplayMs || autoTimer || document.hidden) return;
+    autoTimer = setInterval(function(){ if(!document.hidden) go("left", false); }, autoplayMs);
   }
   function stopAutoplay(){
     if(autoTimer){ clearInterval(autoTimer); autoTimer = null; }
+  }
+  function resetAutoplay(){
+    if(autoTimer){
+      stopAutoplay();
+      startAutoplay();
+    }
   }
   return {start:startAutoplay, stop:stopAutoplay};
 }
@@ -870,17 +905,34 @@ if(!reduced.matches){
   /* offers carousel: autoplay activates only when #offers is in the viewport */
   var offersCarousel = initCarousel("offerViewport", "offerTrack", 0, 3500);
   var offersSec = document.getElementById("offers");
+  var isOffersVisible = false;
   if(offersSec && offersCarousel){
+    /* 1) entrance reveal animation observer (threshold: 0.15) */
+    var offersEntryIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          offersSec.classList.add("section-in");
+          offersEntryIO.disconnect();
+        }
+      });
+    },{threshold:0.15});
+    offersEntryIO.observe(offersSec);
+
+    /* 2) autoplay visibility observer (threshold: 0.3) */
     var offersVisIO = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
-        if(entry.isIntersecting){ offersCarousel.start(); }
-        else{ offersCarousel.stop(); }
+        isOffersVisible = entry.isIntersecting;
+        if(isOffersVisible && !document.hidden){
+          offersCarousel.start();
+        } else {
+          offersCarousel.stop();
+        }
       });
     },{threshold:0.3});
     offersVisIO.observe(offersSec);
   }
-  /* school section entry: add .section-in once the section scrolls into view,
-     triggering the card entrance keyframe animation defined in CSS */
+
+  /* school section entry: add .section-in once the section scrolls into view */
   var schoolSec = document.getElementById("school-offers");
   if(schoolSec){
     var schoolEntryIO = new IntersectionObserver(function(entries){
@@ -893,6 +945,16 @@ if(!reduced.matches){
     },{threshold:0.15});
     schoolEntryIO.observe(schoolSec);
   }
+
+  /* tab visibility change listener */
+  document.addEventListener("visibilitychange", function(){
+    document.body.classList.toggle("paused", document.hidden);
+    if(document.hidden){
+      if(offersCarousel) offersCarousel.stop();
+    } else {
+      if(isOffersVisible && offersCarousel) offersCarousel.start();
+    }
+  });
 }
 /* search: filters together with the active category, never replaces it */
 var searchInput = document.getElementById("searchInput");
@@ -937,9 +999,7 @@ document.querySelectorAll(".rv,.card").forEach(function(el){ io.observe(el); });
     f.appendChild(s);
   }
 })();
-document.addEventListener("visibilitychange", function(){
-  document.body.classList.toggle("paused", document.hidden);
-});
+
 /* subtle hero parallax: the brand showcase drifts slower than the scroll */
 (function(){
   if(reduced.matches) return;
