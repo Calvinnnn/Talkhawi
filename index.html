@@ -139,6 +139,33 @@ section.block{padding-block:64px}
 .empty{grid-column:1/-1;text-align:center;color:var(--text-secondary);border:1px dashed var(--line-strong);border-radius:14px;padding:34px}
 .empty strong{display:block;font-size:1.2rem;color:var(--text-primary);margin-bottom:4px}
 .empty span{font-size:.92rem}
+/* offers: promotional marquee of real menu items */
+.offers-sec{background:linear-gradient(180deg,rgba(194,54,22,.07),transparent 45%);border-bottom:1px solid var(--line);overflow:hidden}
+.offer-viewport{overflow:hidden;margin-top:26px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.offer-track{display:flex;direction:ltr;width:max-content;will-change:transform;animation:offerSlide 30s linear infinite}
+.offer-viewport:hover .offer-track{animation-play-state:paused}
+@keyframes offerSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.offer-card{direction:rtl;flex:0 0 260px;margin-right:16px;background:var(--panel);
+  border:1px solid var(--accent-muted);border-radius:18px;overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 24px rgba(194,54,22,.12);
+  transition:transform .3s var(--ease-out),box-shadow .3s,border-color .3s}
+.offer-card:hover{transform:translateY(-4px) scale(1.02);border-color:var(--accent);
+  box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 32px rgba(226,72,31,.3)}
+.offer-media{overflow:hidden;height:150px;background:var(--panel2)}
+.offer-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease-out)}
+.offer-card:hover .offer-media img{transform:scale(1.06)}
+.offer-body{padding:14px 16px 16px}
+.offer-badge{display:inline-block;font-size:.72rem;font-weight:700;color:#fff;
+  background:linear-gradient(90deg,var(--accent),var(--accent-hover));border-radius:999px;padding:3px 12px;margin-bottom:8px;
+  animation:badgePulse 2.6s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(226,72,31,.45)}50%{box-shadow:0 0 0 7px rgba(226,72,31,0)}}
+.offer-body h3{font-size:1.25rem;margin-bottom:2px}
+.offer-cat{font-size:.75rem;color:var(--accent-hover);font-weight:700}
+.offer-price{font-size:.9rem;color:var(--text-primary);margin-top:6px}
+.offer-price b{color:#fff}
+@media (max-width:560px){.offer-card{flex-basis:min(240px,74vw)}}
 /* search */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .search-wrap{margin:22px 0 4px;max-width:520px}
@@ -187,6 +214,8 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-con
   .rv{opacity:1;transform:none}
   .ember,.smoke{display:none}
   .brand-aura{opacity:.45}
+  .offer-track{animation:none;width:auto;flex-wrap:wrap}
+  .offer-card{margin-bottom:16px}
   html{scroll-behavior:auto}
 }
 body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused!important}
@@ -201,6 +230,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <span><b>الطلخاوي</b><small>جزارة ومشويات </small></span>
     </a>
     <nav class="main-nav" aria-label="أقسام الموقع">
+      <a href="#offers">العروض</a>
       <a href="#menu">الأصناف</a>
       <a href="#why">ليه إحنا</a>
       <a href="#faq">أسئلة شائعة</a>
@@ -244,6 +274,17 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         <article class="card rv"><h3>تقطيع اليوم</h3><p>اللحم يتجهز طازج كل يوم، والدهن يتظبط على القطعية عشان تستحمل الجمر من غير ما تنشف.</p></article>
         <article class="card rv"><h3>سوا على الفحم</h3><p>فحم حقيقي ونار هادية. الكفتة والريش والطرب ياخدوا وقتهم ويطلعوا بعلامة الشواية.</p></article>
         <article class="card rv"><h3>أكل يكفي العيلة</h3><p>من السندوتش السريع لصينية المندي والطواجن الكبيرة. كل حجم معمول عشان يتقسم.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block offers-sec" id="offers">
+    <div class="wrap">
+      <p class="eyebrow rv">العروض</p>
+      <h2 class="rv">🔥 اختيارات الطلخاوي</h2>
+      <p class="lede rv">أصناف تستاهل تجربها النهارده. بنفس أسعار المنيو.</p>
+      <div class="offer-viewport rv" id="offerViewport">
+        <div class="offer-track" id="offerTrack"></div>
       </div>
     </div>
   </section>
@@ -517,6 +558,80 @@ function card(it){
   return a;
 }
 buildTabs(); render(false);
+/* offers: random picks referencing existing ITEMS (name + price stay in ITEMS) */
+var OFFER_POOL = [
+  {n:"كفتة", c:"المشويات", img:"assets/images/offers/kofta.jpg", alt:"كفتة مشوية على الفحم مع أرز"},
+  {n:"كباب", c:"المشويات", img:"assets/images/offers/kebab.jpg", alt:"أسياخ كباب مشوية مع عيش وأرز"},
+  {n:"ريش", c:"المشويات", img:"assets/images/offers/ribs.jpg", alt:"ريش ضاني مشوية مع أرز وخضار"},
+  {n:"فرخة مشوية", c:"الطيور", img:"assets/images/offers/chicken.jpg", alt:"فرخة مشوية على الفحم"},
+  {n:"حواوشي لحمة", c:"الحواوشي", img:"assets/images/offers/hawawshi.jpg", alt:"حواوشي لحمة في العيش البلدي"},
+  {n:"ورق عنب", c:"مقبلات وطواجن", img:"assets/images/offers/dolma.jpg", alt:"ورق عنب محشي مرصوص في صينية"},
+  {n:"شاورما فراخ", c:"السندوتشات", img:"assets/images/offers/shawarma.jpg", alt:"شاورما فراخ مع أرز وثومية"}
+];
+function findItem(n, c){
+  for(var i = 0; i < ITEMS.length; i++){
+    if(ITEMS[i].n === n && ITEMS[i].c === c) return ITEMS[i];
+  }
+  return null;
+}
+function getRandomOffers(count){
+  var pool = OFFER_POOL.slice();
+  for(var i = pool.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+  }
+  var picked = [], cats = {};
+  pool.forEach(function(o){
+    if(picked.length >= count) return;
+    if((cats[o.c] || 0) >= 2) return;
+    if(!findItem(o.n, o.c)) return;
+    cats[o.c] = (cats[o.c] || 0) + 1;
+    picked.push(o);
+  });
+  return picked;
+}
+function offerCard(offer, hide){
+  var item = findItem(offer.n, offer.c);
+  var a = document.createElement("article");
+  a.className = "offer-card";
+  if(hide) a.setAttribute("aria-hidden", "true");
+  var media = document.createElement("div");
+  media.className = "offer-media";
+  var im = document.createElement("img");
+  im.src = offer.img;
+  im.alt = offer.alt;
+  im.loading = "lazy";
+  im.decoding = "async";
+  media.appendChild(im);
+  var body = document.createElement("div");
+  body.className = "offer-body";
+  var badge = document.createElement("span");
+  badge.className = "offer-badge";
+  badge.textContent = "عرض مميز";
+  var h = document.createElement("h3");
+  h.textContent = item.n;
+  var cat = document.createElement("div");
+  cat.className = "offer-cat";
+  cat.textContent = item.c;
+  var p = document.createElement("div");
+  p.className = "offer-price";
+  var b = document.createElement("b");
+  b.textContent = item.p;
+  p.appendChild(document.createTextNode("جنيه · "));
+  p.appendChild(b);
+  body.appendChild(badge); body.appendChild(h); body.appendChild(cat); body.appendChild(p);
+  a.appendChild(media); a.appendChild(body);
+  return a;
+}
+function renderOffers(){
+  var track = document.getElementById("offerTrack");
+  if(!track) return;
+  var offers = getRandomOffers(5);
+  track.innerHTML = "";
+  offers.forEach(function(o){ track.appendChild(offerCard(o, false)); });
+  offers.forEach(function(o){ track.appendChild(offerCard(o, true)); });
+}
+renderOffers();
 /* search: filters together with the active category, never replaces it */
 var searchInput = document.getElementById("searchInput");
 var searchClear = document.getElementById("searchClear");
