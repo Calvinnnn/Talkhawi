@@ -667,56 +667,108 @@ function card(it){
   return a;
 }
 buildTabs(); render(false);
-/* offers: random picks referencing existing ITEMS (name + price stay in ITEMS) */
-var OFFER_POOL = [
-  {n:"كفتة", c:"المشويات", img:"assets/images/offers/kofta.jpg", alt:"كفتة مشوية على الفحم مع أرز"},
-  {n:"كباب", c:"المشويات", img:"assets/images/offers/kebab.jpg", alt:"أسياخ كباب مشوية مع عيش وأرز"},
-  {n:"ريش", c:"المشويات", img:"assets/images/offers/ribs.jpg", alt:"ريش ضاني مشوية مع أرز وخضار"},
-  {n:"فرخة مشوية", c:"الطيور", img:"assets/images/offers/chicken.jpg", alt:"فرخة مشوية على الفحم"},
-  {n:"حواوشي لحمة", c:"الحواوشي", img:"assets/images/offers/hawawshi.jpg", alt:"حواوشي لحمة في العيش البلدي"},
-  {n:"ورق عنب", c:"مقبلات وطواجن", img:"assets/images/offers/dolma.jpg", alt:"ورق عنب محشي مرصوص في صينية"},
-  {n:"شاورما فراخ", c:"السندوتشات", img:"assets/images/offers/shawarma.jpg", alt:"شاورما فراخ مع أرز وثومية"}
-];
-function findItem(n, c){
-  for(var i = 0; i < ITEMS.length; i++){
-    if(ITEMS[i].n === n && ITEMS[i].c === c) return ITEMS[i];
-  }
-  return null;
+/* ═══════════════════════════════════════════════════════════════════════
+   OFFERS MARQUEE — continuous infinite random marquee sourced from ITEMS.
+   No separate offer pool needed: every card is a real ITEMS entry.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Image map: item name → offer image. Falls back to category, then default. */
+var OFFER_IMG_MAP = {
+  "كفتة":            "assets/images/offers/kofta.jpg",
+  "كفتة شامي":       "assets/images/offers/kofta.jpg",
+  "كباب":            "assets/images/offers/kebab.jpg",
+  "ريش":             "assets/images/offers/ribs.jpg",
+  "فخادى ضانى":      "assets/images/offers/ribs.jpg",
+  "طرب":             "assets/images/offers/ribs.jpg",
+  "انتركوت":         "assets/images/offers/ribs.jpg",
+  "فلتو":            "assets/images/offers/ribs.jpg",
+  "فرخة مشوية":      "assets/images/offers/chicken.jpg",
+  "فرخة شيش":        "assets/images/offers/chicken.jpg",
+  "فرخة مخلية":      "assets/images/offers/chicken.jpg",
+  "فرخة × بطاطس":    "assets/images/offers/chicken.jpg",
+  "ديك × أرز":       "assets/images/offers/chicken.jpg",
+  "ديك × مكرونة":    "assets/images/offers/chicken.jpg",
+  "شيش طاووق":       "assets/images/offers/chicken.jpg",
+  "حواوشي لحمة":     "assets/images/offers/hawawshi.jpg",
+  "حواوشي سدق":      "assets/images/offers/hawawshi.jpg",
+  "حواوشي بسطرمة":   "assets/images/offers/hawawshi.jpg",
+  "حواوشي مشكل لحوم":"assets/images/offers/hawawshi.jpg",
+  "حواوشي لحمة وش بيتزا":  "assets/images/offers/hawawshi.jpg",
+  "حواوشي سكينتين":  "assets/images/offers/hawawshi.jpg",
+  "حواوشي ضانى":     "assets/images/offers/hawawshi.jpg",
+  "ورق عنب":         "assets/images/offers/dolma.jpg",
+  "مشكل محاشي":      "assets/images/offers/dolma.jpg",
+  "ممبار":           "assets/images/offers/dolma.jpg",
+  "شاورما لحمة":     "assets/images/offers/shawarma.jpg",
+  "شاورما فراخ":     "assets/images/offers/shawarma.jpg"
+};
+var OFFER_CAT_IMG = {
+  "المشويات":        "assets/images/offers/kofta.jpg",
+  "الطيور":          "assets/images/offers/chicken.jpg",
+  "الحواوشي":        "assets/images/offers/hawawshi.jpg",
+  "مقبلات وطواجن":   "assets/images/offers/dolma.jpg",
+  "السندوتشات":      "assets/images/offers/shawarma.jpg",
+  "أكلات بدوية":     "assets/images/offers/ribs.jpg"
+};
+var OFFER_BADGES = ["عرض اليوم","اختيار الطلخاوي","عرض مميز","نجمة اليوم"];
+
+function getOfferImg(item){
+  return OFFER_IMG_MAP[item.n] || OFFER_CAT_IMG[item.c] || "assets/images/offers/kofta.jpg";
 }
-function getRandomOffers(count){
-  var pool = OFFER_POOL.slice();
-  for(var i = pool.length - 1; i > 0; i--){
+
+/* Fisher-Yates shuffle; returns new array */
+function shuffleArr(arr){
+  var a = arr.slice();
+  for(var i = a.length - 1; i > 0; i--){
     var j = Math.floor(Math.random() * (i + 1));
-    var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    var t = a[i]; a[i] = a[j]; a[j] = t;
   }
-  var picked = [], cats = {};
-  pool.forEach(function(o){
-    if(picked.length >= count) return;
-    if((cats[o.c] || 0) >= 2) return;
-    if(!findItem(o.n, o.c)) return;
-    cats[o.c] = (cats[o.c] || 0) + 1;
-    picked.push(o);
-  });
-  return picked;
+  return a;
 }
-function offerCard(offer, hide){
-  var item = findItem(offer.n, offer.c);
+
+/* Pick `count` unique items from ITEMS, preferring items NOT in `excludeItems` */
+function pickOfferItems(count, excludeItems){
+  var excludeKeys = {};
+  if(excludeItems){
+    excludeItems.forEach(function(it){ excludeKeys[it.n + "\x00" + it.c] = true; });
+  }
+  var shuffled = shuffleArr(ITEMS);
+  var result = [];
+  /* First pass: prefer items absent from previous cycle */
+  shuffled.forEach(function(it){
+    if(result.length >= count) return;
+    if(!excludeKeys[it.n + "\x00" + it.c]) result.push(it);
+  });
+  /* Fill remaining if ITEMS is small (shouldn't happen here) */
+  if(result.length < count){
+    shuffled.forEach(function(it){
+      if(result.length >= count) return;
+      if(!result.some(function(r){ return r.n === it.n && r.c === it.c; })) result.push(it);
+    });
+  }
+  return result.slice(0, count);
+}
+
+/* Build a single offer card DOM element from an ITEMS entry */
+function makeOfferCard(item){
+  var badgeText = OFFER_BADGES[Math.floor(Math.random() * OFFER_BADGES.length)];
   var a = document.createElement("article");
   a.className = "offer-card";
-  if(hide) a.setAttribute("aria-hidden", "true");
+  /* media */
   var media = document.createElement("div");
   media.className = "offer-media";
   var im = document.createElement("img");
-  im.src = offer.img;
-  im.alt = offer.alt;
+  im.src = getOfferImg(item);
+  im.alt = item.n + " · " + item.c;
   im.loading = "lazy";
   im.decoding = "async";
   media.appendChild(im);
+  /* body */
   var body = document.createElement("div");
   body.className = "offer-body";
   var badge = document.createElement("span");
   badge.className = "offer-badge";
-  badge.textContent = "عرض مميز";
+  badge.textContent = badgeText;
   var h = document.createElement("h3");
   h.textContent = item.n;
   var cat = document.createElement("div");
@@ -732,14 +784,168 @@ function offerCard(offer, hide){
   a.appendChild(media); a.appendChild(body);
   return a;
 }
-function renderOffers(){
-  var track = document.getElementById("offerTrack");
-  if(!track) return;
-  var offers = getRandomOffers(5);
-  track.innerHTML = "";
-  offers.forEach(function(o){ track.appendChild(offerCard(o, false)); });
+
+/* Update an existing card's content in-place (avoids full DOM rebuild) */
+function updateOfferCard(el, item){
+  var im = el.querySelector("img");
+  im.src = getOfferImg(item);
+  im.alt = item.n + " · " + item.c;
+  el.querySelector("h3").textContent = item.n;
+  el.querySelector(".offer-cat").textContent = item.c;
+  el.querySelector(".offer-price b").textContent = item.p;
+  var badgeText = OFFER_BADGES[Math.floor(Math.random() * OFFER_BADGES.length)];
+  el.querySelector(".offer-badge").textContent = badgeText;
 }
-renderOffers();
+
+/*
+  initOffersMarquee()
+  ───────────────────
+  Continuous infinite marquee using requestAnimationFrame.
+
+  Architecture — double-set seamless swap:
+    The track contains 2×COUNT cards: [Set A (cards 0–9)] [Set B (cards 10–19)]
+
+    offset starts at 0 and decrements by SPEED px/s each frame.
+    When |offset| reaches setWidth (width of one set), Set A has fully
+    scrolled out of view and Set B is now visible from position 0.
+
+    At that instant we:
+      1. Add setWidth back to offset  → instant reset, zero visual change
+         (because Set B's content now occupies exactly where Set A started)
+      2. Copy Set B items into Set A DOM cards
+      3. Generate a fresh random 10 for Set B
+
+    This creates an infinite stream of randomly-changing cycles with
+    no blank frames, no jumps, and no CSS reflow.
+*/
+function initOffersMarquee(){
+  var track = document.getElementById("offerTrack");
+  var vp    = document.getElementById("offerViewport");
+  var sec   = document.getElementById("offers");
+  if(!track || !vp || !sec) return;
+
+  var COUNT = 10;
+  var SPEED = 55;        /* px / second */
+  var GAP   = 16;        /* matches .offer-card margin-right (px) */
+
+  var itemsA, itemsB;
+  var cardsA = [], cardsB = [];
+  var offset   = 0;
+  var setWidth = 0;      /* recalculated after first layout */
+  var rafId    = null;
+  var lastTs   = null;
+  var marqueeVisible = false;
+  var marqueeRunning = false;
+
+  /* ── Build DOM ── */
+  function buildDOM(){
+    itemsA = pickOfferItems(COUNT, null);
+    itemsB = pickOfferItems(COUNT, itemsA);
+    track.innerHTML = "";
+    cardsA = itemsA.map(function(it){
+      var c = makeOfferCard(it); track.appendChild(c); return c;
+    });
+    cardsB = itemsB.map(function(it){
+      var c = makeOfferCard(it); track.appendChild(c); return c;
+    });
+    /* Measure after layout paint */
+    requestAnimationFrame(function(){
+      var first = track.children[0];
+      if(first){
+        GAP = parseFloat(getComputedStyle(first).marginRight) || 16;
+        setWidth = COUNT * (first.offsetWidth + GAP);
+      }
+      offset = 0;
+      track.style.transform = "translateX(0px)";
+    });
+  }
+
+  /* ── RAF tick ── */
+  function tick(ts){
+    if(!marqueeRunning){ rafId = null; return; }
+    if(lastTs === null) lastTs = ts;
+    var dt = (ts - lastTs) / 1000;
+    if(dt > 0.1) dt = 0.1; /* clamp stale frames after tab switch */
+    lastTs = ts;
+
+    offset -= SPEED * dt;
+
+    /* Cycle boundary: Set A has fully exited */
+    if(setWidth > 0 && offset <= -setWidth){
+      offset += setWidth;           /* invisible positional reset */
+      /* Promote Set B → Set A (update DOM in-place) */
+      itemsA = itemsB.slice();
+      cardsA.forEach(function(el, i){ updateOfferCard(el, itemsA[i]); });
+      /* Generate fresh Set B */
+      itemsB = pickOfferItems(COUNT, itemsA);
+      cardsB.forEach(function(el, i){ updateOfferCard(el, itemsB[i]); });
+    }
+
+    track.style.transform = "translateX(" + offset.toFixed(2) + "px)";
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startMarquee(){
+    if(marqueeRunning || reduced.matches || document.hidden) return;
+    marqueeRunning = true;
+    lastTs = null;
+    rafId  = requestAnimationFrame(tick);
+  }
+  function stopMarquee(){
+    marqueeRunning = false;
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    lastTs = null;
+  }
+
+  /* ── Recalculate on resize ── */
+  var resizeTimer;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      var first = track.children[0];
+      if(!first) return;
+      GAP = parseFloat(getComputedStyle(first).marginRight) || 16;
+      setWidth = COUNT * (first.offsetWidth + GAP);
+      /* Keep offset within valid range after resize */
+      if(setWidth > 0 && offset < -setWidth) offset = offset % -setWidth;
+    }, 200);
+  });
+
+  /* ── Observers ── */
+
+  /* Entrance animation (one-shot) */
+  var entryIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ sec.classList.add("section-in"); entryIO.disconnect(); }
+    });
+  },{threshold:0.15});
+  entryIO.observe(sec);
+
+  /* Autoplay control */
+  var visIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      marqueeVisible = e.isIntersecting;
+      if(marqueeVisible && !document.hidden){ startMarquee(); }
+      else { stopMarquee(); }
+    });
+  },{threshold:0.2});
+  visIO.observe(sec);
+
+  /* Hover pause (desktop) */
+  vp.addEventListener("mouseenter", function(){ stopMarquee(); });
+  vp.addEventListener("mouseleave", function(){
+    if(marqueeVisible && !document.hidden) startMarquee();
+  });
+
+  /* Tab visibility */
+  document.addEventListener("visibilitychange", function(){
+    document.body.classList.toggle("paused", document.hidden);
+    if(document.hidden){ stopMarquee(); }
+    else if(marqueeVisible){ startMarquee(); }
+  });
+
+  buildDOM();
+}
 /* school boxes */
 var SCHOOL_BOXES = [
   {name:"بوكس التوفير", price:"1700", img:"assets/images/offers/box-tawfir.jpg", alt:"بوكس التوفير من الطلخاوي",
@@ -899,63 +1105,26 @@ function initCarousel(vpId, trackId, fixedVisible, autoplayMs){
   }
   return {start:startAutoplay, stop:stopAutoplay};
 }
+/* School carousel — index-based step carousel, manual arrows only */
 if(!reduced.matches){
-  /* school carousel: manual arrows only, no autoplay */
   initCarousel("schoolViewport", "schoolTrack", 1);
-  /* offers carousel: autoplay activates only when #offers is in the viewport */
-  var offersCarousel = initCarousel("offerViewport", "offerTrack", 0, 3500);
-  var offersSec = document.getElementById("offers");
-  var isOffersVisible = false;
-  if(offersSec && offersCarousel){
-    /* 1) entrance reveal animation observer (threshold: 0.15) */
-    var offersEntryIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          offersSec.classList.add("section-in");
-          offersEntryIO.disconnect();
-        }
-      });
-    },{threshold:0.15});
-    offersEntryIO.observe(offersSec);
-
-    /* 2) autoplay visibility observer (threshold: 0.3) */
-    var offersVisIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        isOffersVisible = entry.isIntersecting;
-        if(isOffersVisible && !document.hidden){
-          offersCarousel.start();
-        } else {
-          offersCarousel.stop();
-        }
-      });
-    },{threshold:0.3});
-    offersVisIO.observe(offersSec);
-  }
-
-  /* school section entry: add .section-in once the section scrolls into view */
-  var schoolSec = document.getElementById("school-offers");
-  if(schoolSec){
-    var schoolEntryIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          schoolSec.classList.add("section-in");
-          schoolEntryIO.disconnect();
-        }
-      });
-    },{threshold:0.15});
-    schoolEntryIO.observe(schoolSec);
-  }
-
-  /* tab visibility change listener */
-  document.addEventListener("visibilitychange", function(){
-    document.body.classList.toggle("paused", document.hidden);
-    if(document.hidden){
-      if(offersCarousel) offersCarousel.stop();
-    } else {
-      if(isOffersVisible && offersCarousel) offersCarousel.start();
-    }
-  });
 }
+
+/* School section entrance animation */
+(function(){
+  var schoolSec = document.getElementById("school-offers");
+  if(!schoolSec) return;
+  var schoolEntryIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){ schoolSec.classList.add("section-in"); schoolEntryIO.disconnect(); }
+    });
+  },{threshold:0.15});
+  schoolEntryIO.observe(schoolSec);
+})();
+
+/* Offers marquee — continuous RAF-based infinite marquee drawn from ITEMS.
+   Handles its own IntersectionObserver, hover pause, and tab-visibility. */
+initOffersMarquee();
 /* search: filters together with the active category, never replaces it */
 var searchInput = document.getElementById("searchInput");
 var searchClear = document.getElementById("searchClear");
