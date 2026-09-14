@@ -139,15 +139,27 @@ section.block{padding-block:64px}
 .empty{grid-column:1/-1;text-align:center;color:var(--text-secondary);border:1px dashed var(--line-strong);border-radius:14px;padding:34px}
 .empty strong{display:block;font-size:1.2rem;color:var(--text-primary);margin-bottom:4px}
 .empty span{font-size:.92rem}
-/* offers: promotional marquee of real menu items */
-.offers-sec{background:linear-gradient(180deg,rgba(194,54,22,.07),transparent 45%);border-bottom:1px solid var(--line);overflow:hidden}
+/* offers: promotional carousel of real menu items */
+.offers-sec{position:relative;overflow:hidden;border-block:1px solid var(--line);
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%,rgba(226,72,31,.16),transparent 60%),
+    radial-gradient(ellipse 60% 45% at 50% 112%,rgba(194,54,22,.14),transparent 62%),
+    radial-gradient(ellipse 45% 35% at 12% 55%,rgba(107,50,32,.20),transparent 65%),
+    radial-gradient(ellipse 45% 35% at 88% 55%,rgba(107,50,32,.20),transparent 65%),
+    linear-gradient(180deg,#221511 0%,#1b1512 28%,#1b1512 72%,#170e0a 100%)}
+.offers-sec::before{content:"";position:absolute;inset-inline:0;top:0;height:2px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--accent) 20%,var(--accent-hover) 50%,var(--accent) 80%,transparent);opacity:.85}
+.offers-sec::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 40% at 50% 46%,rgba(226,72,31,.07),transparent 70%)}
+.offers-sec>.wrap{position:relative;z-index:1}
 .offer-viewport{overflow:hidden;margin-top:26px;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .offer-track{display:flex;direction:ltr;width:max-content;will-change:transform}
-.offer-card{direction:rtl;flex:0 0 260px;margin-right:16px;background:var(--panel);
+.offer-card{direction:rtl;flex:0 0 260px;margin-right:16px;
+  background:linear-gradient(180deg,#33261d,var(--panel) 55%);
   border:1px solid var(--accent-muted);border-radius:18px;overflow:hidden;
-  box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 24px rgba(194,54,22,.12);
+  box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 24px rgba(194,54,22,.14);
   transition:transform .3s var(--ease-out),box-shadow .3s,border-color .3s}
 .offer-card:hover{transform:translateY(-4px) scale(1.02);border-color:var(--accent);
   box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 32px rgba(226,72,31,.3)}
