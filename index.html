@@ -144,9 +144,7 @@ section.block{padding-block:64px}
 .offer-viewport{overflow:hidden;margin-top:26px;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.offer-track{display:flex;direction:ltr;width:max-content;will-change:transform;animation:offerSlide 30s linear infinite}
-.offer-viewport:hover .offer-track{animation-play-state:paused}
-@keyframes offerSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.offer-track{display:flex;direction:ltr;width:max-content;will-change:transform}
 .offer-card{direction:rtl;flex:0 0 260px;margin-right:16px;background:var(--panel);
   border:1px solid var(--accent-muted);border-radius:18px;overflow:hidden;
   box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 24px rgba(194,54,22,.12);
@@ -166,6 +164,46 @@ section.block{padding-block:64px}
 .offer-price{font-size:.9rem;color:var(--text-primary);margin-top:6px}
 .offer-price b{color:#fff}
 @media (max-width:560px){.offer-card{flex-basis:min(240px,74vw)}}
+/* school offers section */
+.school-offers-sec{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.school-offers-sec::before{content:"";position:absolute;inset:-10%;background:url('assets/images/offers/school-bg.jpg') center/cover no-repeat;
+  animation:schoolBgZoom 25s ease-in-out infinite alternate;opacity:.14;z-index:0}
+@keyframes schoolBgZoom{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(-2%,1%)}}
+.school-offers-sec::after{content:"";position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg,rgba(27,21,18,.88) 0%,rgba(27,21,18,.68) 50%,rgba(27,21,18,.9) 100%)}
+.school-offers-sec > .wrap{position:relative;z-index:1}
+.school-box-viewport{overflow:hidden;margin-top:26px;position:relative;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.school-box-track{display:flex;direction:ltr;width:max-content;will-change:transform}
+.school-box-card{direction:rtl;flex:0 0 420px;margin-right:20px;background:var(--panel);
+  border:2px solid var(--accent-muted);border-radius:20px;overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(194,54,22,.15);
+  transition:transform .3s var(--ease-out),box-shadow .3s,border-color .3s}
+.school-box-card:hover{transform:translateY(-4px);border-color:var(--accent);
+  box-shadow:0 20px 50px rgba(0,0,0,.6),0 0 40px rgba(226,72,31,.3)}
+.school-box-media{overflow:hidden;height:300px;background:var(--panel2)}
+.school-box-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease-out)}
+.school-box-card:hover .school-box-media img{transform:scale(1.05)}
+.school-box-body{padding:20px 24px 24px}
+.school-box-body h3{font-size:1.5rem;margin-bottom:4px}
+.school-box-price{font-size:1.1rem;font-weight:700;color:var(--accent-hover);margin-bottom:12px}
+.school-box-price b{font-size:1.4rem;color:#fff}
+.school-box-items{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.school-box-items li{font-size:.9rem;color:var(--text-secondary);position:relative;padding-inline-start:18px}
+.school-box-items li::before{content:"✓";position:absolute;inset-inline-start:0;color:var(--accent-hover);font-weight:700}
+@media (max-width:560px){.school-box-card{flex-basis:min(340px,88vw)}.school-box-items{grid-template-columns:1fr}}
+/* carousel arrows */
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;
+  border-radius:50%;border:1px solid var(--line-strong);background:rgba(27,21,18,.8);backdrop-filter:blur(8px);
+  color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border-color .2s,transform .2s var(--ease-out);box-shadow:0 4px 16px rgba(0,0,0,.5)}
+.carousel-arrow:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-50%) scale(1.08)}
+.carousel-arrow:active{transform:translateY(-50%) scale(.94)}
+.carousel-arrow svg{width:20px;height:20px;flex:none}
+.carousel-arrow--left{left:10px}
+.carousel-arrow--right{right:10px}
+@media (max-width:560px){.carousel-arrow{width:38px;height:38px}.carousel-arrow svg{width:18px;height:18px}}
 /* search */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .search-wrap{margin:22px 0 4px;max-width:520px}
@@ -214,8 +252,8 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-con
   .rv{opacity:1;transform:none}
   .ember,.smoke{display:none}
   .brand-aura{opacity:.45}
-  .offer-track{animation:none;width:auto;flex-wrap:wrap}
-  .offer-card{margin-bottom:16px}
+  .offer-track,.school-box-track{width:auto;flex-wrap:wrap}
+  .offer-card,.school-box-card{margin-bottom:16px}
   html{scroll-behavior:auto}
 }
 body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused!important}
@@ -230,6 +268,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <span><b>الطلخاوي</b><small>جزارة ومشويات </small></span>
     </a>
     <nav class="main-nav" aria-label="أقسام الموقع">
+      <a href="#school-offers">بوكات المدارس</a>
       <a href="#offers">العروض</a>
       <a href="#menu">الأصناف</a>
       <a href="#why">ليه إحنا</a>
@@ -278,6 +317,23 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     </div>
   </section>
 
+  <section class="block school-offers-sec" id="school-offers">
+    <div class="wrap">
+      <p class="eyebrow rv">بوكات العودة للمدارس</p>
+      <h2 class="rv">🔥 من ملوك البلدي</h2>
+      <p class="lede rv">بوكات لحمة طازجة بأسعار مميزة. اختار البوكس اللي يناسبك.</p>
+      <div class="school-box-viewport rv" id="schoolViewport">
+        <div class="school-box-track" id="schoolTrack"></div>
+        <button class="carousel-arrow carousel-arrow--left" aria-label="السابق">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-arrow carousel-arrow--right" aria-label="التالي">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <section class="block offers-sec" id="offers">
     <div class="wrap">
       <p class="eyebrow rv">العروض</p>
@@ -285,6 +341,12 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <p class="lede rv">أصناف تستاهل تجربها النهارده. بنفس أسعار المنيو.</p>
       <div class="offer-viewport rv" id="offerViewport">
         <div class="offer-track" id="offerTrack"></div>
+        <button class="carousel-arrow carousel-arrow--left" aria-label="السابق">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-arrow carousel-arrow--right" aria-label="التالي">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
       </div>
     </div>
   </section>
@@ -632,6 +694,84 @@ function renderOffers(){
   offers.forEach(function(o){ track.appendChild(offerCard(o, true)); });
 }
 renderOffers();
+/* school boxes */
+var SCHOOL_BOXES = [
+  {name:"بوكس التوفير", price:"1700", img:"assets/images/offers/box-tawfir.jpg", alt:"بوكس التوفير من الطلخاوي",
+   items:["كيلو مفروم","نص سدق","نص كبدة","نص فنلك","نص مكبات","نص موزة"]},
+  {name:"بوكس المدارس", price:"2000", img:"assets/images/offers/box-madaris.jpg", alt:"بوكس المدارس من الطلخاوي",
+   items:["نص فنلك","نص مكبات","نص شاورما","نص سدق","نص برجر","نص مفروم","نص كبدة","نص بلية","نص شيش"]}
+];
+function schoolBoxCard(box, hide){
+  var a = document.createElement("article");
+  a.className = "school-box-card";
+  if(hide) a.setAttribute("aria-hidden","true");
+  var media = document.createElement("div");
+  media.className = "school-box-media";
+  var im = document.createElement("img");
+  im.src = box.img; im.alt = box.alt; im.loading = "lazy"; im.decoding = "async";
+  media.appendChild(im);
+  var body = document.createElement("div");
+  body.className = "school-box-body";
+  var h = document.createElement("h3");
+  h.textContent = box.name;
+  var pr = document.createElement("div");
+  pr.className = "school-box-price";
+  var b = document.createElement("b");
+  b.textContent = box.price;
+  pr.appendChild(document.createTextNode("جنيه · "));
+  pr.appendChild(b);
+  var ul = document.createElement("ul");
+  ul.className = "school-box-items";
+  box.items.forEach(function(it){
+    var li = document.createElement("li");
+    li.textContent = it;
+    ul.appendChild(li);
+  });
+  body.appendChild(h); body.appendChild(pr); body.appendChild(ul);
+  a.appendChild(media); a.appendChild(body);
+  return a;
+}
+function renderSchoolBoxes(){
+  var track = document.getElementById("schoolTrack");
+  if(!track) return;
+  track.innerHTML = "";
+  SCHOOL_BOXES.forEach(function(b){ track.appendChild(schoolBoxCard(b, false)); });
+  SCHOOL_BOXES.forEach(function(b){ track.appendChild(schoolBoxCard(b, true)); });
+}
+renderSchoolBoxes();
+/* carousel drift + arrow nudge (rAF-based, continuous scroll) */
+(function(){
+  if(reduced.matches) return;
+  var drifts = [
+    {track:document.getElementById("offerTrack"), vp:document.getElementById("offerViewport"), speed:60},
+    {track:document.getElementById("schoolTrack"), vp:document.getElementById("schoolViewport"), speed:45}
+  ];
+  drifts.forEach(function(c){
+    if(!c.track || !c.vp) return;
+    var pos = 0, nudge = 0, last = performance.now(), paused = false;
+    c.vp.addEventListener("mouseenter", function(){ paused = true; });
+    c.vp.addEventListener("mouseleave", function(){ paused = false; last = performance.now(); });
+    function tick(now){
+      var dt = Math.min((now - last) / 1000, 0.1);
+      last = now;
+      if(!paused) pos -= c.speed * dt;
+      nudge *= 0.92;
+      if(Math.abs(nudge) < 0.3) nudge = 0;
+      var half = c.track.scrollWidth / 2;
+      if(half > 0){
+        if(pos <= -half) pos += half;
+        if(pos > 0) pos -= half;
+      }
+      c.track.style.transform = "translateX(" + (pos + nudge) + "px)";
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    var leftBtn = c.vp.querySelector(".carousel-arrow--left");
+    var rightBtn = c.vp.querySelector(".carousel-arrow--right");
+    if(leftBtn) leftBtn.addEventListener("click", function(){ nudge -= 280; });
+    if(rightBtn) rightBtn.addEventListener("click", function(){ nudge += 280; });
+  });
+})();
 /* search: filters together with the active category, never replaces it */
 var searchInput = document.getElementById("searchInput");
 var searchClear = document.getElementById("searchClear");
