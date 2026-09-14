@@ -181,23 +181,41 @@ section.block{padding-block:64px}
 @media (max-width:560px){.offer-card{flex-basis:min(240px,74vw)}}
 /* school offers section */
 .school-offers-sec{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+/* override .block padding for extra breathing room */
+#school-offers{padding-block:80px 72px}
 .school-offers-sec::before{content:"";position:absolute;inset:-10%;background:url('assets/images/offers/school-bg.jpg') center/cover no-repeat;
-  animation:schoolBgZoom 25s ease-in-out infinite alternate;opacity:.14;z-index:0}
+  animation:schoolBgZoom 25s ease-in-out infinite alternate;opacity:.38;z-index:0}
 @keyframes schoolBgZoom{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(-2%,1%)}}
 .school-offers-sec::after{content:"";position:absolute;inset:0;z-index:0;
-  background:linear-gradient(180deg,rgba(27,21,18,.88) 0%,rgba(27,21,18,.68) 50%,rgba(27,21,18,.9) 100%)}
+  background:
+    /* top accent line: 2px brand-red strip at the very top */
+    linear-gradient(180deg,rgba(226,72,31,.9) 0,rgba(194,54,22,.55) 1px,transparent 2px),
+    /* main tonal vignette: dark top/bottom, lighter mid */
+    linear-gradient(180deg,rgba(18,11,8,.92) 0%,rgba(18,11,8,.52) 30%,rgba(13,8,6,.48) 70%,rgba(18,11,8,.9) 100%),
+    /* warm red glow rising from the bottom-center */
+    radial-gradient(ellipse 78% 48% at 50% 108%,rgba(194,54,22,.30),transparent 68%),
+    /* side vignettes for depth */
+    radial-gradient(ellipse 28% 100% at 0% 50%,rgba(6,3,1,.55),transparent 100%),
+    radial-gradient(ellipse 28% 100% at 100% 50%,rgba(6,3,1,.55),transparent 100%)}
 .school-offers-sec > .wrap{position:relative;z-index:1}
+/* heading enhancements */
+#school-offers .eyebrow{font-size:.88rem;letter-spacing:.06em;text-transform:uppercase}
+#school-offers h2{font-size:clamp(2rem,5vw,3rem);text-shadow:0 2px 22px rgba(194,54,22,.45),var(--tshadow)}
+/* school-section-specific arrow styling (more contrast over the bg image) */
+.school-offers-sec .carousel-arrow{background:rgba(16,9,6,.92);border-color:rgba(107,50,32,.7)}
+.school-offers-sec .carousel-arrow:hover{background:var(--accent);border-color:var(--accent);
+  box-shadow:0 6px 24px rgba(194,54,22,.5)}
 .school-box-viewport{overflow:hidden;margin-top:26px;position:relative;max-width:480px;margin-inline:auto}
 .school-box-track{display:flex;direction:ltr;will-change:transform;transition:transform .45s var(--ease-out)}
 .school-box-card{direction:rtl;flex:0 0 100%;margin-right:20px;background:var(--panel);
   border:2px solid var(--accent-muted);border-radius:20px;overflow:hidden;
-  box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(194,54,22,.15);
+  box-shadow:0 16px 48px rgba(0,0,0,.65),0 0 40px rgba(194,54,22,.18),0 0 0 1px rgba(107,50,32,.25);
   transition:transform .3s var(--ease-out),box-shadow .3s,border-color .3s}
-.school-box-card:hover{transform:translateY(-4px);border-color:var(--accent);
-  box-shadow:0 20px 50px rgba(0,0,0,.6),0 0 40px rgba(226,72,31,.3)}
+.school-box-card:hover{transform:translateY(-5px);border-color:var(--accent);
+  box-shadow:0 24px 60px rgba(0,0,0,.72),0 0 50px rgba(226,72,31,.38),0 0 0 1px rgba(194,54,22,.4)}
 .school-box-media{overflow:hidden;height:300px;background:var(--panel2)}
 .school-box-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease-out)}
-.school-box-card:hover .school-box-media img{transform:scale(1.05)}
+.school-box-card:hover .school-box-media img{transform:scale(1.06)}
 .school-box-body{padding:20px 24px 24px}
 .school-box-body h3{font-size:1.5rem;margin-bottom:4px}
 .school-box-price{font-size:1.1rem;font-weight:700;color:var(--accent-hover);margin-bottom:12px}
@@ -206,6 +224,10 @@ section.block{padding-block:64px}
 .school-box-items li{font-size:.9rem;color:var(--text-secondary);position:relative;padding-inline-start:18px}
 .school-box-items li::before{content:"✓";position:absolute;inset-inline-start:0;color:var(--accent-hover);font-weight:700}
 @media (max-width:560px){.school-box-card{flex-basis:100%}.school-box-items{grid-template-columns:1fr}}
+/* card entrance animation: fires once when #school-offers.section-in is set by IntersectionObserver */
+@keyframes schoolCardIn{0%{opacity:0;transform:translateY(22px) scale(.97)}100%{opacity:1;transform:none}}
+#school-offers.section-in .school-box-track .school-box-card:not([aria-hidden]){
+  animation:schoolCardIn .75s var(--ease-settle) both}
 /* carousel arrows */
 .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;
   border-radius:50%;border:1px solid var(--line-strong);background:rgba(27,21,18,.85);backdrop-filter:blur(8px);
