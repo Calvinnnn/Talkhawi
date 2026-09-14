@@ -817,6 +817,12 @@ function updateOfferCard(el, item){
 
     This creates an infinite stream of randomly-changing cycles with
     no blank frames, no jumps, and no CSS reflow.
+
+    Manual arrows: the .carousel-arrow buttons step the track by exactly
+    one card (card width + gap). Right steps backward (content shifts
+    right, clamped at 0); left steps forward (content shifts left, reusing
+    the same Set A→B promotion at the boundary). Auto-scroll pauses for
+    the step animation and resumes after a short cooldown.
 */
 function initOffersMarquee(){
   var track = document.getElementById("offerTrack");
@@ -836,6 +842,11 @@ function initOffersMarquee(){
   var lastTs   = null;
   var marqueeVisible = false;
   var marqueeRunning = false;
+  var stepping = false;  /* manual arrow step animation in flight */
+  var isHovering = false;
+  var stepFallbackTimer = null;
+  var resumeTimer = null;
+  var RESUME_DELAY = 1200; /* ms of calm before auto-scroll resumes after a click */
 
   /* ── Build DOM ── */
   function buildDOM(){
@@ -897,6 +908,68 @@ function initOffersMarquee(){
     lastTs = null;
   }
 
+  /* ── Manual arrow stepping ── */
+  function cardStep(){
+    var first = track.children[0];
+    if(!first || !first.offsetWidth) return 0;
+    var g = parseFloat(getComputedStyle(first).marginRight);
+    if(!(g >= 0)) g = 16;
+    return first.offsetWidth + g;
+  }
+  function clearStepFallback(){
+    if(stepFallbackTimer){ clearTimeout(stepFallbackTimer); stepFallbackTimer = null; }
+  }
+  function scheduleResume(){
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(function(){
+      resumeTimer = null;
+      if(!stepping && marqueeVisible && !isHovering && !document.hidden) startMarquee();
+    }, RESUME_DELAY);
+  }
+  function onStepEnd(){
+    clearStepFallback();
+    stepping = false;
+    scheduleResume();
+  }
+  function stepManual(dir){
+    if(reduced.matches || stepping) return;
+    var s = cardStep();
+    if(!(s > 0)) return;
+    stopMarquee();
+    clearTimeout(resumeTimer);
+    stepping = true;
+    if(dir === "right"){
+      /* backward: shift content right, never past the start edge */
+      offset = Math.min(0, offset + s);
+    } else {
+      /* forward: shift content left, promoting sets at the boundary */
+      offset -= s;
+      while(setWidth > 0 && offset <= -setWidth){
+        offset += setWidth;
+        itemsA = itemsB.slice();
+        cardsA.forEach(function(el, i){ updateOfferCard(el, itemsA[i]); });
+        itemsB = pickOfferItems(COUNT, itemsA);
+        cardsB.forEach(function(el, i){ updateOfferCard(el, itemsB[i]); });
+      }
+    }
+    /* the .offer-track CSS transition animates this move */
+    track.style.transition = "";
+    track.style.transform = "translateX(" + offset.toFixed(2) + "px)";
+    clearStepFallback();
+    stepFallbackTimer = setTimeout(onStepEnd, 600);
+  }
+  track.addEventListener("transitionend", function(e){
+    if(!e || e.target !== track || e.propertyName !== "transform" || !stepping) return;
+    onStepEnd();
+  });
+  if(!reduced.matches){
+    var offerBox = vp.parentNode;
+    var offerBtns = offerBox ? offerBox.querySelectorAll(".carousel-arrow") : [];
+    Array.prototype.forEach.call(offerBtns, function(b){
+      b.addEventListener("click", function(){ stepManual(b.getAttribute("data-dir")); });
+    });
+  }
+
   /* ── Recalculate on resize ── */
   var resizeTimer;
   window.addEventListener("resize", function(){
@@ -932,9 +1005,10 @@ function initOffersMarquee(){
   visIO.observe(sec);
 
   /* Hover pause (desktop) */
-  vp.addEventListener("mouseenter", function(){ stopMarquee(); });
+  vp.addEventListener("mouseenter", function(){ isHovering = true; stopMarquee(); });
   vp.addEventListener("mouseleave", function(){
-    if(marqueeVisible && !document.hidden) startMarquee();
+    isHovering = false;
+    if(!stepping && marqueeVisible && !document.hidden) startMarquee();
   });
 
   /* Tab visibility */
